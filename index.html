@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#0f0f0d"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Life Dashboard"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="icon" href="icon.svg"/>
+<title>Life Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;500&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#fafaf8;--bg2:#f2f0e8;--bg3:#e8e6de;--bg4:#dedcD4;
+  --text:#0f0f0d;--text2:#5a5a52;--text3:#9a9a90;--text4:#c8c8be;
+  --border:rgba(15,15,13,0.08);--border2:rgba(15,15,13,0.15);
+  --teal:#1D9E75;--teal-l:#E1F5EE;--teal-d:#085041;
+  --blue:#378ADD;--blue-l:#E6F1FB;--blue-d:#0C447C;
+  --purple:#7F77DD;--purple-l:#EEEDFE;--purple-d:#3C3489;
+  --amber:#EF9F27;--amber-l:#FAEEDA;--amber-d:#633806;
+  --red:#E24B4A;--red-l:#FCEBEB;--red-d:#A32D2D;
+  --r:14px;--rs:8px;--rm:10px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#0f0f0d;--bg2:#1a1a18;--bg3:#242422;--bg4:#2e2e2c;
+    --text:#f0efe8;--text2:#a0a098;--text3:#606058;--text4:#404038;
+    --border:rgba(240,239,232,0.08);--border2:rgba(240,239,232,0.15);
+    --teal-l:#0a2e20;--teal-d:#5DCAA5;
+    --blue-l:#0a1e38;--blue-d:#85B7EB;
+    --purple-l:#18163a;--purple-d:#AFA9EC;
+    --amber-l:#2a1e08;--amber-d:#FAC775;
+    --red-l:#2a0e0e;--red-d:#F09595;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:15px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+.app{max-width:700px;margin:0 auto;padding:0 0 100px}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0;margin-bottom:16px}
+.topbar-left h1{font-size:20px;font-weight:500;color:var(--text)}
+.topbar-left p{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+.topbar-score{text-align:right}
+.topbar-score-num{font-size:28px;font-weight:300;font-family:'DM Mono',monospace;color:var(--text);line-height:1}
+.topbar-score-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* AI BANNER */
+.ai-banner{margin:0 16px 16px;border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden;border:1px solid var(--border2)}
+.ai-banner-inner{display:flex;gap:12px;align-items:flex-start}
+.ai-icon{width:36px;height:36px;border-radius:10px;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.ai-content{flex:1}
+.ai-label{font-size:11px;font-weight:500;color:var(--purple);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.ai-text{font-size:13px;color:var(--text);line-height:1.6}
+.ai-refresh{font-size:12px;color:var(--purple-d);cursor:pointer;margin-top:8px;display:inline-flex;align-items:center;gap:4px;opacity:0.8}
+.ai-loading{font-size:13px;color:var(--text3);font-style:italic}
+
+/* NAV */
+.nav{display:flex;margin:0 16px 20px;background:var(--bg2);border-radius:var(--r);padding:4px;border:1px solid var(--border);gap:2px}
+.nav-btn{flex:1;font-size:11px;padding:8px 2px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:10px;font-family:'Noto Sans Georgian',sans-serif;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav-btn .nav-icon{font-size:16px}
+.nav-btn.active{background:var(--bg);color:var(--text);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+
+/* SECTION */
+.section{display:none;padding:0 16px;animation:fadeIn 0.18s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px}
+.card-title{font-size:14px;font-weight:500;color:var(--text)}
+.card-hint{font-size:11px;color:var(--text3)}
+.card-body{padding:0 16px 14px}
+
+/* STATS GRID */
+.stats4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stats2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat-box{background:var(--bg2);border-radius:var(--rm);padding:12px 14px;border:1px solid var(--border)}
+.stat-lbl{font-size:11px;color:var(--text3);margin-bottom:3px}
+.stat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* TASKS */
+.filter-strip{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;padding-bottom:1px}
+.filter-strip::-webkit-scrollbar{display:none}
+.fbtn{font-size:11px;padding:5px 11px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text3);cursor:pointer;white-space:nowrap;font-family:'Noto Sans Georgian',sans-serif;transition:all 0.12s;flex-shrink:0}
+.fbtn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+.task-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.task-item:last-child{border-bottom:none}
+.pri-stripe{width:3px;height:32px;border-radius:2px;flex-shrink:0}
+.pri-high-s{background:var(--red)}.pri-mid-s{background:var(--amber)}.pri-low-s{background:var(--teal)}
+.chk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.chk.done{background:var(--teal);border-color:var(--teal)}
+.chk.done::after{content:'';width:6px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);display:block}
+.task-info{flex:1;min-width:0}
+.task-name{font-size:13px;color:var(--text);cursor:pointer}
+.task-name.done{text-decoration:line-through;color:var(--text3)}
+.task-tags{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.tag{font-size:11px;padding:2px 7px;border-radius:20px}
+.tt{background:var(--teal-l);color:var(--teal-d)}
+.tb{background:var(--blue-l);color:var(--blue-d)}
+.tp{background:var(--purple-l);color:var(--purple-d)}
+.ta{background:var(--amber-l);color:var(--amber-d)}
+.ph{background:var(--red-l);color:var(--red-d)}
+.pm{background:var(--amber-l);color:var(--amber-d)}
+.pl{background:var(--teal-l);color:var(--teal-d)}
+.del-x{font-size:18px;color:var(--text4);cursor:pointer;padding:0 3px;flex-shrink:0;line-height:1}
+
+/* ADD FORM */
+.add-form{background:var(--bg2);border-radius:var(--rs);padding:12px;margin-top:6px;border:1px solid var(--border)}
+.ai{width:100%;font-size:13px;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;margin-bottom:8px;outline:none}
+.ai:focus{border-color:var(--text3)}
+.arow{display:flex;gap:6px;margin-bottom:8px}
+.arow select,.arow input{flex:1;font-size:12px;padding:8px 9px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;outline:none;min-width:0}
+.abtn{width:100%;font-size:13px;padding:10px;border:none;border-radius:var(--rs);background:var(--text);color:var(--bg);cursor:pointer;font-family:'Noto Sans Georgian',sans-serif;font-weight:500;transition:opacity 0.1s}
+.abtn:active{opacity:0.7}
+
+/* HABITS */
+.habit-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
+.habit-item:last-child{border-bottom:none}
+.habit-name{font-size:13px;color:var(--text);width:85px;flex-shrink:0}
+.hdots{display:flex;gap:4px;flex:1}
+.hdot{width:22px;height:22px;border-radius:5px;cursor:pointer;border:1px solid var(--border2);background:var(--bg2);transition:all 0.12s;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3)}
+.hdot.on{border-width:0;color:#fff}
+.ot{background:var(--teal)}.ob{background:var(--blue)}.op{background:var(--purple)}.oa{background:var(--amber)}
+.hstreak{font-size:12px;color:var(--text3);min-width:30px;text-align:right;font-family:'DM Mono',monospace}
+.hbar-wrap{margin-top:4px}
+.hbar-track{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.hbar-fill{height:100%;border-radius:2px;transition:width 0.4s}
+
+/* GOALS */
+.goal-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.goal-item:last-child{border-bottom:none}
+.goal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.goal-name{font-size:13px;font-weight:500;color:var(--text)}
+.goal-pct{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2)}
+.goal-desc{font-size:12px;color:var(--text3);margin-bottom:8px}
+.goal-bar-track{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border);margin-bottom:6px}
+.goal-bar-fill{height:100%;border-radius:4px;transition:width 0.4s}
+.goal-footer{display:flex;align-items:center;justify-content:space-between}
+.goal-nums{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.goal-cat{font-size:11px;padding:2px 7px;border-radius:20px}
+.goal-controls{display:flex;gap:6px;align-items:center}
+.goal-inp{width:70px;font-size:12px;padding:4px 8px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg2);color:var(--text);font-family:'DM Mono',monospace;text-align:center;outline:none}
+.goal-upd{font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:var(--rs);background:transparent;color:var(--text2);cursor:pointer;font-family:'Noto Sans Georgian',sans-serif}
+
+/* REMINDER */
+.rem-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.rem-item:last-child{border-bottom:none}
+.rem-time{font-size:13px;font-family:'DM Mono',monospace;color:var(--text);min-width:48px;font-weight:500}
+.rem-text{font-size:13px;color:var(--text);flex:1}
+.rem-repeat{font-size:11px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)}
+.rem-toggle{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;transition:background 0.2s;position:relative;flex-shrink:0}
+.rem-toggle.on{background:var(--teal)}
+.rem-toggle.off{background:var(--bg3)}
+.rem-toggle::after{content:'';width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:3px;transition:left 0.2s}
+.rem-toggle.on::after{left:19px}
+.rem-toggle.off::after{left:3px}
+
+/* FINANCE */
+.fin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.fin-box{background:var(--bg2);border-radius:var(--rm);padding:12px;border:1px solid var(--border)}
+.fin-lbl{font-size:11px;color:var(--text3);margin-bottom:3px}
+.fin-val{font-size:17px;font-weight:500;font-family:'DM Mono',monospace}
+.bbar{margin-bottom:10px}
+.bbar-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px}
+.bbar-track{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.bbar-fill{height:100%;border-radius:4px;transition:width 0.4s}
+.exp-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.exp-item:last-child{border-bottom:none}
+.exp-cat-badge{font-size:11px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border);flex-shrink:0}
+.exp-desc{font-size:13px;color:var(--text);flex:1}
+.exp-amt{font-size:13px;font-weight:500;font-family:'DM Mono',monospace}
+
+/* LEARN */
+.course-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.course-item:last-child{border-bottom:none}
+.course-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.course-info{flex:1;min-width:0}
+.course-name{font-size:13px;font-weight:500;color:var(--text)}
+.course-sub{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+.cbar{height:4px;background:var(--bg2);border-radius:2px;margin-top:6px;overflow:hidden}
+.cfill{height:100%;border-radius:2px;transition:width 0.4s}
+.cinp{width:58px;font-size:12px;padding:5px 7px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg2);color:var(--text);font-family:'DM Mono',monospace;text-align:center;outline:none}
+
+/* STATS PAGE */
+.chart-wrap{position:relative;height:200px;margin-bottom:8px}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.wday{background:var(--bg2);border-radius:6px;padding:8px 4px;text-align:center;border:1px solid var(--border)}
+.wday-lbl{font-size:10px;color:var(--text3);margin-bottom:4px}
+.wday-val{font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+.streak-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.streak-badge{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--rm);border:1px solid var(--border);background:var(--bg2)}
+.streak-icon{font-size:18px}
+.streak-info{}
+.streak-name{font-size:12px;color:var(--text2)}
+.streak-num{font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+
+/* EMPTY */
+.empty{font-size:13px;color:var(--text3);padding:20px 0;text-align:center}
+
+/* INSTALL */
+.install-bar{margin:0 16px 14px;background:var(--purple-l);border:1px solid rgba(127,119,221,0.25);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px}
+.install-bar-text{flex:1;font-size:13px;color:var(--purple-d);line-height:1.4}
+.install-bar-btn{font-size:12px;padding:7px 14px;background:var(--purple);color:#fff;border:none;border-radius:var(--rs);cursor:pointer;font-family:'Noto Sans Georgian',sans-serif;font-weight:500;flex-shrink:0}
+.install-bar-x{font-size:18px;color:var(--purple-d);cursor:pointer;opacity:0.5}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-title{font-size:16px;font-weight:500;color:var(--text)}
+.sec-sub{font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Life Dashboard</h1>
+      <p id="tb-date"></p>
+    </div>
+    <div class="topbar-score">
+      <div class="topbar-score-num" id="tb-score">—</div>
+      <div class="topbar-score-lbl">დღის ქულა</div>
+    </div>
+  </div>
+
+  <div id="install-bar" class="install-bar" style="display:none">
+    <div class="install-bar-text">დააყენე კომპიუტერზე — ინტერნეტის გარეშეც!</div>
+    <button class="install-bar-btn" id="install-btn">დაყენება</button>
+    <div class="install-bar-x" onclick="this.parentElement.style.display='none'">×</div>
+  </div>
+
+  <!-- AI ADVICE -->
+  <div class="ai-banner" id="ai-banner" style="background:var(--purple-l);border-color:rgba(127,119,221,0.2)">
+    <div class="ai-banner-inner">
+      <div class="ai-icon">✦</div>
+      <div class="ai-content">
+        <div class="ai-label">AI რჩევა</div>
+        <div class="ai-text ai-loading" id="ai-text">იფიქრებ...</div>
+        <div class="ai-refresh" id="ai-refresh" onclick="fetchAI()" style="display:none">↻ ახალი რჩევა</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSec('tasks',this)"><span class="nav-icon">✓</span>დავალ.</button>
+    <button class="nav-btn" onclick="showSec('goals',this)"><span class="nav-icon">◎</span>მიზნები</button>
+    <button class="nav-btn" onclick="showSec('habits',this)"><span class="nav-icon">⬡</span>ჩვევები</button>
+    <button class="nav-btn" onclick="showSec('remind',this)"><span class="nav-icon">◷</span>შეხსენ.</button>
+    <button class="nav-btn" onclick="showSec('finance',this)"><span class="nav-icon">₾</span>ფინანსი</button>
+    <button class="nav-btn" onclick="showSec('stats',this)"><span class="nav-icon">↗</span>სტატ.</button>
+  </div>
+
+  <!-- TASKS -->
+  <div id="sec-tasks" class="section active">
+    <div class="filter-strip">
+      <button class="fbtn active" onclick="setFilter('all',this)">ყველა</button>
+      <button class="fbtn" onclick="setFilter('active',this)">მიმდინარე</button>
+      <button class="fbtn" onclick="setFilter('done',this)">დასრულდა</button>
+      <button class="fbtn" onclick="setFilter('high',this)">🔴 სასწრაფო</button>
+      <button class="fbtn" onclick="setFilter('mid',this)">🟡 საშუალო</button>
+      <button class="fbtn" onclick="setFilter('low',this)">🟢 დაბალი</button>
+    </div>
+    <div class="stats4">
+      <div class="stat-box"><div class="stat-lbl">სულ</div><div class="stat-val" id="ts-total">0</div></div>
+      <div class="stat-box"><div class="stat-lbl">დასრულდა</div><div class="stat-val" id="ts-done" style="color:var(--teal)">0</div></div>
+      <div class="stat-box"><div class="stat-lbl">სასწრაფო</div><div class="stat-val" id="ts-high" style="color:var(--red)">0</div></div>
+      <div class="stat-box"><div class="stat-lbl">პროგრესი</div><div class="stat-val" id="ts-pct">0%</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">დავალებები</div><div class="card-hint" id="task-hint"></div></div>
+      <div class="card-body">
+        <div id="task-list"></div>
+        <div class="add-form">
+          <input class="ai" id="task-inp" placeholder="ახალი დავალება..." onkeydown="if(event.key==='Enter')addTask()"/>
+          <div class="arow">
+            <select id="task-pri"><option value="high">🔴 მაღალი</option><option value="mid" selected>🟡 საშუალო</option><option value="low">🟢 დაბალი</option></select>
+            <select id="task-cat"><option value="t">ჯანმრთ.</option><option value="p">სწავლა</option><option value="b">ფინანსი</option><option value="a">დრო</option></select>
+          </div>
+          <button class="abtn" onclick="addTask()">+ დამატება</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOALS -->
+  <div id="sec-goals" class="section">
+    <div class="sec-header"><div class="sec-title">მიზნები</div><div class="sec-sub" id="goals-stat"></div></div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">ჩემი მიზნები</div><div class="card-hint">პროგრესი</div></div>
+      <div class="card-body">
+        <div id="goal-list"></div>
+        <div class="add-form">
+          <input class="ai" id="goal-name" placeholder="მიზნის სახელი (მაგ: 10,000 ნაბიჯი)"/>
+          <div class="arow">
+            <input class="ai" id="goal-target" type="number" placeholder="მიზანი (რიცხვი)" style="margin:0"/>
+            <input class="ai" id="goal-unit" placeholder="ერთეული (ნაბ/₾/%)" style="margin:0"/>
+          </div>
+          <div class="arow">
+            <select id="goal-cat"><option value="t">ჯანმრთ.</option><option value="p">სწავლა</option><option value="b">ფინანსი</option><option value="a">პროდუქტ.</option></select>
+          </div>
+          <button class="abtn" onclick="addGoal()">+ მიზნის დამატება</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HABITS -->
+  <div id="sec-habits" class="section">
+    <div class="stats2">
+      <div class="stat-box"><div class="stat-lbl">კვირის სულ</div><div class="stat-val" id="hs-total">0/0</div></div>
+      <div class="stat-box"><div class="stat-lbl">საუკეთ. სერია</div><div class="stat-val" id="hs-streak" style="color:var(--amber)">0🔥</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">კვირის ჩვევები</div><div class="card-hint">დააჭირე დღეს</div></div>
+      <div class="card-body"><div id="habit-list"></div></div>
+    </div>
+  </div>
+
+  <!-- REMINDERS -->
+  <div id="sec-remind" class="section">
+    <div class="card">
+      <div class="card-head"><div class="card-title">შეხსენებები</div><div class="card-hint" id="rem-stat"></div></div>
+      <div class="card-body">
+        <div id="rem-list"></div>
+        <div class="add-form">
+          <input class="ai" id="rem-text" placeholder="შეხსენება (მაგ: ვარჯიში)"/>
+          <div class="arow">
+            <input class="ai" id="rem-time" type="time" value="09:00" style="margin:0"/>
+            <select id="rem-repeat"><option value="daily">ყოველდღე</option><option value="weekdays">სამუშ. დღეები</option><option value="weekly">კვირაში ერთხელ</option><option value="once">ერთხელ</option></select>
+          </div>
+          <button class="abtn" onclick="addReminder()">+ შეხსენების დამატება</button>
+        </div>
+        <div style="margin-top:10px;padding:10px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--border)">
+          <div style="font-size:12px;color:var(--text3);line-height:1.6">
+            ℹ️ შეხსენებები ინახება აპში. ბრაუზერის ნოტიფიკაციებისთვის დააჭირე ღილაკს:
+          </div>
+          <button onclick="askNotifPerm()" style="margin-top:8px;font-size:12px;padding:6px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:transparent;color:var(--text);cursor:pointer;font-family:'Noto Sans Georgian',sans-serif" id="notif-btn">🔔 ნოტიფიკაციების ჩართვა</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINANCE -->
+  <div id="sec-finance" class="section">
+    <div class="fin-stats">
+      <div class="fin-box"><div class="fin-lbl">ხარჯი</div><div class="fin-val" id="fn-total">0₾</div></div>
+      <div class="fin-box"><div class="fin-lbl">ბიუჯეტი</div><div class="fin-val">500₾</div></div>
+      <div class="fin-box"><div class="fin-lbl">დარჩა</div><div class="fin-val" id="fn-left">500₾</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">კატეგორიები</div></div>
+      <div class="card-body"><div id="fin-bars"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">ხარჯები</div></div>
+      <div class="card-body">
+        <div id="exp-list"></div>
+        <div class="add-form">
+          <input class="ai" id="exp-desc" placeholder="რა იყიდე?"/>
+          <div class="arow">
+            <input class="ai" id="exp-amt" type="number" placeholder="₾ თანხა" style="margin:0"/>
+            <select id="exp-cat"><option>საკვები</option><option>ტრანსპ.</option><option>გართობა</option><option>ჯანმრთ.</option><option>სხვა</option></select>
+          </div>
+          <button class="abtn" onclick="addExp()">+ ხარჯის დამატება</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div id="sec-stats" class="section">
+    <div class="sec-header"><div class="sec-title">სტატისტიკა</div><div class="sec-sub">ბოლო 7 დღე</div></div>
+
+    <div class="stats4">
+      <div class="stat-box"><div class="stat-lbl">საშ. ქულა</div><div class="stat-val" id="st-avg">—</div></div>
+      <div class="stat-box"><div class="stat-lbl">სულ დავალ.</div><div class="stat-val" id="st-tasks">—</div></div>
+      <div class="stat-box"><div class="stat-lbl">ჩვ. სერია</div><div class="stat-val" id="st-hstreak">—</div></div>
+      <div class="stat-box"><div class="stat-lbl">დახარჯა</div><div class="stat-val" id="st-spent">—</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">პროგრესი კვირის განმავლობაში</div></div>
+      <div class="card-body">
+        <div class="chart-wrap"><canvas id="progress-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">ხარჯები კატეგორიებით</div></div>
+      <div class="card-body">
+        <div class="chart-wrap" style="height:180px"><canvas id="exp-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">ჩვევების სერიები</div></div>
+      <div class="card-body"><div class="streak-row" id="streak-row"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">კვირის მიმოხილვა</div></div>
+      <div class="card-body">
+        <div class="week-grid" id="week-grid"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var STORE = 'ld-v2';
+var priO = {high:0,mid:1,low:2};
+var catMap = {t:{lbl:'ჯანმრთ.',cls:'tt',col:'#1D9E75'},p:{lbl:'სწავლა',cls:'tp',col:'#7F77DD'},b:{lbl:'ფინანსი',cls:'tb',col:'#378ADD'},a:{lbl:'დრო/პრ.',cls:'ta',col:'#EF9F27'}};
+var weekDays = ['ო','ს','ო','ხ','პ','შ','კ'];
+var priMap = {high:{lbl:'მაღალი',cls:'ph',stripe:'pri-high-s'},mid:{lbl:'საშ.',cls:'pm',stripe:'pri-mid-s'},low:{lbl:'დაბ.',cls:'pl',stripe:'pri-low-s'}};
+var catLimitMap = {საკვები:200,'ტრანსპ.':100,გართობა:120,'ჯანმრთ.':80,სხვა:80};
+var curFilter='all';
+var deferredPrompt=null;
+var charts={};
+
+var def = {
+  tasks:[
+    {text:'დილის ვარჯიში',cat:'t',pri:'high',done:true},
+    {text:'Python გაკვეთილი',cat:'p',pri:'high',done:false},
+    {text:'ბიუჯეტის განახლება',cat:'b',pri:'mid',done:false},
+    {text:'10,000 ნაბიჯი',cat:'t',pri:'mid',done:false},
+    {text:'კვირის გეგმა',cat:'a',pri:'low',done:false}
+  ],
+  goals:[
+    {name:'10,000 ნაბიჯი',target:10000,current:7400,unit:'ნაბ.',cat:'t'},
+    {name:'შემნახველი ₾1000',target:1000,current:340,unit:'₾',cat:'b'},
+    {name:'Python კურსი',target:100,current:68,unit:'%',cat:'p'},
+    {name:'კილოგრამი -5',target:5,current:2,unit:'კგ',cat:'t'}
+  ],
+  habits:[
+    {name:'ვარჯიში',color:'t',days:[1,1,1,0,0,0,0]},
+    {name:'კითხვა',color:'p',days:[1,1,0,0,0,0,0]},
+    {name:'მედიტაცია',color:'b',days:[1,1,1,1,0,0,0]},
+    {name:'ბიუჯეტი',color:'a',days:[1,0,0,0,0,0,0]}
+  ],
+  reminders:[
+    {text:'დილის ვარჯიში',time:'07:00',repeat:'daily',on:true},
+    {text:'წყლის დალევა',time:'10:00',repeat:'daily',on:true},
+    {text:'ბიუჯეტის შემოწმება',time:'20:00',repeat:'weekdays',on:false}
+  ],
+  expenses:[
+    {desc:'სუპერმარკეტი',amt:45,cat:'საკვები'},
+    {desc:'ავტობუსი',amt:10,cat:'ტრანსპ.'},
+    {desc:'კინო',amt:25,cat:'გართობა'}
+  ],
+  scores:[65,70,68,75,80,78,82]
+};
+
+function load(){try{var d=localStorage.getItem(STORE);return d?JSON.parse(d):def;}catch(e){return def;}}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(data));}catch(e){}}
+var data=load();
+
+// DATE
+var now=new Date();
+var months=['იანვ','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
+var wds=['კვ','ორ','სა','ოთ','ხუ','პა','შა'];
+var el=document.getElementById('tb-date');
+if(el) el.textContent=wds[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+
+// SCORE
+function calcScore(){
+  var done=data.tasks.filter(function(t){return t.done}).length;
+  var taskPct=data.tasks.length?Math.round(done/data.tasks.length*100):0;
+  var hd=data.habits.reduce(function(s,h){return s+h.days.reduce(function(a,b){return a+b},0)},0);
+  var hm=data.habits.length*7;
+  var habitPct=hm?Math.round(hd/hm*100):0;
+  var exp=data.expenses.reduce(function(s,e){return s+e.amt},0);
+  var finPct=Math.max(0,Math.round((500-exp)/500*100));
+  var goalPct=data.goals.length?Math.round(data.goals.reduce(function(s,g){return s+Math.min(100,Math.round(g.current/g.target*100))},0)/data.goals.length):0;
+  return Math.round((taskPct+habitPct+finPct+goalPct)/4);
+}
+
+// NAV
+function showSec(id,btn){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  render();
+  if(id==='stats') setTimeout(renderCharts,100);
+}
+
+function setFilter(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  renderTasks();
+}
+
+function render(){renderScore();renderTasks();renderGoals();renderHabits();renderReminders();renderFinance();renderStats();}
+
+function renderScore(){
+  var s=calcScore();
+  var e=document.getElementById('tb-score');
+  if(e){e.textContent=s+'%';e.style.color=s>=70?'var(--teal)':s>=40?'var(--amber)':'var(--red)';}
+}
+
+// TASKS
+function renderTasks(){
+  var filtered=data.tasks.filter(function(t){
+    if(curFilter==='active') return !t.done;
+    if(curFilter==='done') return t.done;
+    if(curFilter==='high') return t.pri==='high';
+    if(curFilter==='mid') return t.pri==='mid';
+    if(curFilter==='low') return t.pri==='low';
+    return true;
+  }).sort(function(a,b){
+    if(a.done!==b.done) return a.done?1:-1;
+    return priO[a.pri]-priO[b.pri];
+  });
+  var done=data.tasks.filter(function(t){return t.done}).length;
+  var high=data.tasks.filter(function(t){return !t.done&&t.pri==='high'}).length;
+  var pct=data.tasks.length?Math.round(done/data.tasks.length*100):0;
+  setText('ts-total',data.tasks.length);
+  setText('ts-done',done);
+  setText('ts-high',high);
+  setText('ts-pct',pct+'%');
+  setText('task-hint',done+'/'+data.tasks.length);
+  var list=document.getElementById('task-list'); if(!list) return;
+  if(!filtered.length){list.innerHTML='<div class="empty">დავალება არ მოიძებნა</div>';return;}
+  list.innerHTML='';
+  filtered.forEach(function(t){
+    var idx=data.tasks.indexOf(t);
+    var d=document.createElement('div'); d.className='task-item';
+    var pm=priMap[t.pri]; var cm=catMap[t.cat]||catMap['a'];
+    d.innerHTML='<div class="pri-stripe '+pm.stripe+'"></div>'+
+      '<div class="chk'+(t.done?' done':'')+'" onclick="toggleTask('+idx+')"></div>'+
+      '<div class="task-info">'+
+        '<div class="task-name'+(t.done?' done':'')+'" onclick="toggleTask('+idx+')">'+t.text+'</div>'+
+        '<div class="task-tags"><span class="tag '+pm.cls+'">'+pm.lbl+'</span><span class="tag '+cm.cls+'">'+cm.lbl+'</span></div>'+
+      '</div>'+
+      '<div class="del-x" onclick="delTask('+idx+')">×</div>';
+    list.appendChild(d);
+  });
+}
+function toggleTask(i){data.tasks[i].done=!data.tasks[i].done;save();render();}
+function delTask(i){data.tasks.splice(i,1);save();render();}
+function addTask(){
+  var inp=document.getElementById('task-inp'); var t=inp.value.trim(); if(!t) return;
+  data.tasks.unshift({text:t,cat:document.getElementById('task-cat').value,pri:document.getElementById('task-pri').value,done:false});
+  inp.value='';save();render();
+}
+
+// GOALS
+function renderGoals(){
+  var total=data.goals.length;
+  var done=data.goals.filter(function(g){return g.current>=g.target}).length;
+  setText('goals-stat',done+'/'+total+' დასრულდა');
+  var list=document.getElementById('goal-list'); if(!list) return;
+  if(!data.goals.length){list.innerHTML='<div class="empty">მიზანი არ გაქვს</div>';return;}
+  list.innerHTML='';
+  data.goals.forEach(function(g,i){
+    var pct=Math.min(100,Math.round(g.current/g.target*100));
+    var cm=catMap[g.cat]||catMap['a'];
+    var col=pct>=100?'var(--teal)':pct>=60?'var(--blue)':pct>=30?'var(--amber)':'var(--red)';
+    var row=document.createElement('div'); row.className='goal-item';
+    row.innerHTML='<div class="goal-header">'+
+        '<div class="goal-name">'+g.name+'</div>'+
+        '<div class="goal-pct" style="color:'+col+'">'+pct+'%</div>'+
+      '</div>'+
+      '<div class="goal-bar-track"><div class="goal-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'+
+      '<div class="goal-footer">'+
+        '<div class="goal-nums">'+g.current+' / '+g.target+' '+g.unit+'</div>'+
+        '<div class="goal-controls">'+
+          '<span class="tag '+cm.cls+'">'+cm.lbl+'</span>'+
+          '<input class="goal-inp" type="number" value="'+g.current+'" onchange="updGoal('+i+',this.value)"/>'+
+          '<button class="goal-upd" onclick="updGoalBtn('+i+')">განახლება</button>'+
+          '<div class="del-x" onclick="delGoal('+i+')">×</div>'+
+        '</div>'+
+      '</div>';
+    list.appendChild(row);
+  });
+}
+function updGoal(i,v){data.goals[i].current=Math.max(0,parseFloat(v)||0);}
+function updGoalBtn(i){save();render();}
+function delGoal(i){data.goals.splice(i,1);save();render();}
+function addGoal(){
+  var name=document.getElementById('goal-name').value.trim();
+  var target=parseFloat(document.getElementById('goal-target').value);
+  var unit=document.getElementById('goal-unit').value.trim()||'';
+  var cat=document.getElementById('goal-cat').value;
+  if(!name||!target) return;
+  data.goals.push({name:name,target:target,current:0,unit:unit,cat:cat});
+  document.getElementById('goal-name').value='';
+  document.getElementById('goal-target').value='';
+  document.getElementById('goal-unit').value='';
+  save();render();
+}
+
+// HABITS
+function renderHabits(){
+  var total=data.habits.length*7;
+  var done=data.habits.reduce(function(s,h){return s+h.days.reduce(function(a,b){return a+b},0)},0);
+  var maxStreak=data.habits.reduce(function(ms,h){
+    var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);
+  },0);
+  setText('hs-total',done+'/'+total);
+  setText('hs-streak',maxStreak+'🔥');
+  var list=document.getElementById('habit-list'); if(!list) return;
+  list.innerHTML='';
+  data.habits.forEach(function(h,hi){
+    var streak=0; for(var d=6;d>=0;d--){if(h.days[d])streak++;else break;}
+    var weekDone=h.days.reduce(function(a,b){return a+b},0);
+    var pct=Math.round(weekDone/7*100);
+    var col=catMap[h.color]?catMap[h.color].col:'#888';
+    var row=document.createElement('div'); row.className='habit-item';
+    var dotsH=weekDays.map(function(lbl,di){
+      var onCls=h.days[di]?(' on o'+h.color):'';
+      return '<div class="hdot'+onCls+'" onclick="toggleDot('+hi+','+di+')" title="'+lbl+'">'+lbl+'</div>';
+    }).join('');
+    row.innerHTML='<div class="habit-name">'+h.name+'</div>'+
+      '<div style="flex:1">'+
+        '<div class="hdots">'+dotsH+'</div>'+
+        '<div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>'+
+      '</div>'+
+      '<div class="hstreak">'+streak+'🔥</div>';
+    list.appendChild(row);
+  });
+}
+function toggleDot(hi,di){data.habits[hi].days[di]=data.habits[hi].days[di]?0:1;save();render();}
+
+// REMINDERS
+function renderReminders(){
+  var on=data.reminders.filter(function(r){return r.on}).length;
+  setText('rem-stat',on+' აქტიური');
+  var list=document.getElementById('rem-list'); if(!list) return;
+  if(!data.reminders.length){list.innerHTML='<div class="empty">შეხსენება არ გაქვს</div>';return;}
+  list.innerHTML='';
+  var repMap={daily:'ყოველდღე',weekdays:'სამ. დღ.',weekly:'კვ. ერთხ.',once:'ერთხელ'};
+  data.reminders.forEach(function(r,i){
+    var row=document.createElement('div'); row.className='rem-item';
+    row.innerHTML='<div class="rem-time">'+r.time+'</div>'+
+      '<div class="rem-text">'+r.text+'</div>'+
+      '<div class="rem-repeat">'+repMap[r.repeat]+'</div>'+
+      '<button class="rem-toggle '+(r.on?'on':'off')+'" onclick="toggleRem('+i+')" title="'+(r.on?'გამორთვა':'ჩართვა')+'"></button>'+
+      '<div class="del-x" onclick="delRem('+i+')">×</div>';
+    list.appendChild(row);
+  });
+}
+function toggleRem(i){data.reminders[i].on=!data.reminders[i].on;save();render();scheduleNotifs();}
+function delRem(i){data.reminders.splice(i,1);save();render();}
+function addReminder(){
+  var text=document.getElementById('rem-text').value.trim();
+  var time=document.getElementById('rem-time').value;
+  var repeat=document.getElementById('rem-repeat').value;
+  if(!text) return;
+  data.reminders.push({text:text,time:time,repeat:repeat,on:true});
+  document.getElementById('rem-text').value='';
+  save();render();scheduleNotifs();
+}
+function askNotifPerm(){
+  if(!('Notification' in window)){alert('ბრაუზერი არ უჭერს მხარს ნოტიფიკაციებს');return;}
+  Notification.requestPermission().then(function(p){
+    var btn=document.getElementById('notif-btn');
+    if(p==='granted'){if(btn)btn.textContent='✅ ნოტიფიკაციები ჩართულია';scheduleNotifs();}
+    else{if(btn)btn.textContent='❌ უარყოფილია';}
+  });
+}
+function scheduleNotifs(){
+  if(typeof Notification==='undefined'||Notification.permission!=='granted') return;
+  data.reminders.filter(function(r){return r.on;}).forEach(function(r){
+    var parts=r.time.split(':');
+    var now2=new Date(); var fire=new Date();
+    fire.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
+    if(fire<=now2) fire.setDate(fire.getDate()+1);
+    var delay=fire-now2;
+    setTimeout(function(){
+      new Notification('Life Dashboard — '+r.text,{body:r.time+' — '+r.text,icon:'icon.svg'});
+    },delay);
+  });
+}
+
+// FINANCE
+function renderFinance(){
+  var total=data.expenses.reduce(function(s,e){return s+e.amt},0);
+  var left=500-total;
+  var ft=document.getElementById('fn-total'); if(ft) ft.textContent=total+'₾';
+  var fl=document.getElementById('fn-left'); if(fl){fl.textContent=left+'₾';fl.style.color=left<0?'var(--red)':'var(--teal)';}
+  var cats={};
+  data.expenses.forEach(function(e){cats[e.cat]=(cats[e.cat]||0)+e.amt;});
+  var bars=document.getElementById('fin-bars'); if(!bars) return;
+  bars.innerHTML=Object.keys(catLimitMap).map(function(c){
+    var spent=cats[c]||0; var lim=catLimitMap[c];
+    var pct=Math.min(100,Math.round(spent/lim*100));
+    var col=pct>90?'var(--red)':pct>70?'var(--amber)':'var(--blue)';
+    return '<div class="bbar"><div class="bbar-lbl"><span>'+c+'</span><span>'+spent+'/'+lim+'₾</span></div>'+
+      '<div class="bbar-track"><div class="bbar-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
+  }).join('');
+  var el=document.getElementById('exp-list'); if(!el) return;
+  if(!data.expenses.length){el.innerHTML='<div class="empty">ხარჯები არ გაქვს</div>';return;}
+  el.innerHTML='';
+  data.expenses.slice().reverse().forEach(function(e,ri){
+    var i=data.expenses.length-1-ri;
+    var row=document.createElement('div'); row.className='exp-item';
+    row.innerHTML='<div class="exp-cat-badge">'+e.cat+'</div>'+
+      '<div class="exp-desc">'+e.desc+'</div>'+
+      '<div class="exp-amt">'+e.amt+'₾</div>'+
+      '<div class="del-x" onclick="delExp('+i+')">×</div>';
+    el.appendChild(row);
+  });
+}
+function delExp(i){data.expenses.splice(i,1);save();render();}
+function addExp(){
+  var desc=document.getElementById('exp-desc').value.trim();
+  var amt=parseFloat(document.getElementById('exp-amt').value);
+  var cat=document.getElementById('exp-cat').value;
+  if(!desc||!amt||amt<=0) return;
+  data.expenses.push({desc:desc,amt:Math.round(amt),cat:cat});
+  document.getElementById('exp-desc').value='';
+  document.getElementById('exp-amt').value='';
+  save();render();
+}
+
+// STATS
+function renderStats(){
+  var done=data.tasks.filter(function(t){return t.done}).length;
+  var exp=data.expenses.reduce(function(s,e){return s+e.amt},0);
+  var maxS=data.habits.reduce(function(ms,h){var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);},0);
+  var avgScore=Math.round(data.scores.reduce(function(a,b){return a+b},0)/data.scores.length);
+  setText('st-avg',avgScore+'%');
+  setText('st-tasks',done+'/'+data.tasks.length);
+  setText('st-hstreak',maxS+'🔥');
+  setText('st-spent',exp+'₾');
+
+  var sr=document.getElementById('streak-row'); if(!sr) return;
+  sr.innerHTML='';
+  data.habits.forEach(function(h){
+    var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}
+    var cm=catMap[h.color]||catMap['a'];
+    var badge=document.createElement('div'); badge.className='streak-badge';
+    badge.innerHTML='<div class="streak-icon" style="font-size:18px">◉</div>'+
+      '<div class="streak-info"><div class="streak-name">'+h.name+'</div><div class="streak-num" style="color:'+cm.col+'">'+s+'🔥</div></div>';
+    sr.appendChild(badge);
+  });
+
+  var wg=document.getElementById('week-grid'); if(!wg) return;
+  var wlbls=['ორშ','სამ','ოთხ','ხუთ','პარ','შაბ','კვ'];
+  wg.innerHTML=wlbls.map(function(lbl,i){
+    var s=data.scores[i]||0;
+    var col=s>=70?'var(--teal)':s>=40?'var(--amber)':'var(--red)';
+    return '<div class="wday"><div class="wday-lbl">'+lbl+'</div><div class="wday-val" style="color:'+col+'">'+s+'</div></div>';
+  }).join('');
+}
+
+function renderCharts(){
+  // Progress chart
+  var pCtx=document.getElementById('progress-chart');
+  if(pCtx){
+    if(charts.progress) charts.progress.destroy();
+    var isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+    var gridCol=isDark?'rgba(240,239,232,0.08)':'rgba(15,15,13,0.06)';
+    var textCol=isDark?'#606058':'#9a9a90';
+    charts.progress=new Chart(pCtx,{
+      type:'line',
+      data:{
+        labels:['ორშ','სამ','ოთხ','ხუთ','პარ','შაბ','კვ'],
+        datasets:[{
+          label:'ქულა',
+          data:data.scores,
+          borderColor:'#7F77DD',
+          backgroundColor:'rgba(127,119,221,0.08)',
+          borderWidth:2,
+          pointBackgroundColor:'#7F77DD',
+          pointRadius:4,
+          tension:0.4,
+          fill:true
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{min:0,max:100,grid:{color:gridCol},ticks:{color:textCol,font:{size:11}}},
+          x:{grid:{display:false},ticks:{color:textCol,font:{size:11}}}
+        }
+      }
+    });
+  }
+
+  // Expense donut
+  var eCtx=document.getElementById('exp-chart');
+  if(eCtx){
+    if(charts.exp) charts.exp.destroy();
+    var cats2={};
+    data.expenses.forEach(function(e){cats2[e.cat]=(cats2[e.cat]||0)+e.amt;});
+    var labels=Object.keys(cats2);
+    var vals=labels.map(function(k){return cats2[k];});
+    var colors=['#378ADD','#EF9F27','#7F77DD','#1D9E75','#E24B4A'];
+    charts.exp=new Chart(eCtx,{
+      type:'doughnut',
+      data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:0,hoverOffset:4}]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'right',labels:{font:{size:12},color:window.matchMedia('(prefers-color-scheme:dark)').matches?'#a0a098':'#5a5a52',padding:12}}}
+      }
+    });
+  }
+}
+
+// AI ADVICE
+var aiAdvices = [
+  'დღეს 3 სასწრაფო დავალება გაქვს — დაიწყე ყველაზე მნიშვნელოვნით. Eat the frog! 🐸',
+  'შენი ვარჯიშის სერია 3 დღეა — გააგრძელე! მხოლოდ 4 დღე და კვირა დაისრულება 💪',
+  'ბიუჯეტი კარგადაა. ტრანსპორტზე ახლოს ხარ ლიმიტს — გაუფრთხილდი 🚌',
+  'Python კურსი 68%-ზეა — ამ ტემპით 2 კვირაში დაასრულებ! 📚',
+  'დღეს 10,000 ნაბიჯიდან 7,400 გამდინარეა — კიდევ ცოტა სიარული! 🚶',
+  'შემნახველი ₾340 — კარგი პროგრესი! ₾660 დარჩა მიზნამდე 💰',
+  'მედიტაციის სერია 4 დღეა — ეს ძალიან კარგია! გონება და სხეული გმადლობს 🧘',
+  'ამ კვირა 5+ ჩვევა შეასრულე — შენ ჩამპიონი ხარ! 🏆'
+];
+
+function fetchAI(){
+  var textEl=document.getElementById('ai-text');
+  var refEl=document.getElementById('ai-refresh');
+  if(!textEl) return;
+  textEl.className='ai-text ai-loading';
+  textEl.textContent='ანალიზი...';
+  if(refEl) refEl.style.display='none';
+
+  setTimeout(function(){
+    var score=calcScore();
+    var done=data.tasks.filter(function(t){return t.done}).length;
+    var high=data.tasks.filter(function(t){return !t.done&&t.pri==='high'}).length;
+    var exp=data.expenses.reduce(function(s,e){return s+e.amt},0);
+    var maxStreak=data.habits.reduce(function(ms,h){var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);},0);
+
+    var msgs=[];
+    if(high>0) msgs.push('🔴 '+high+' სასწრაფო დავალება გაქვს — ჯერ მათ მოუხელთე!');
+    else if(done===data.tasks.length&&data.tasks.length>0) msgs.push('🎉 ყველა დავალება დასრულდა — შესანიშნავი დღე!');
+    else msgs.push('✓ '+done+'/'+data.tasks.length+' დავალება გაქვს დასრულებული.');
+
+    if(maxStreak>=3) msgs.push('🔥 '+maxStreak+' დღის სერია — გააგრძელე!');
+    if(exp>400) msgs.push('⚠️ ბიუჯეტი თითქმის გამოიყო — ფრთხილად.');
+    else if(exp<100) msgs.push('💰 ბიუჯეტი კარგ მდგომარეობაშია.');
+
+    if(score>=70) msgs.push('💪 საერთო ქულა '+score+'% — ძლიერი დღე!');
+    else if(score<40) msgs.push('📈 ქულა '+score+'% — მეტი ენერგია სჭირდება.');
+
+    textEl.className='ai-text';
+    textEl.textContent=msgs.join(' ');
+    if(refEl) refEl.style.display='inline-flex';
+  }, 800);
+}
+
+// UTILS
+function setText(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
+
+// PWA
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();deferredPrompt=e;
+  var b=document.getElementById('install-bar');if(b)b.style.display='flex';
+});
+var ib=document.getElementById('install-btn');
+if(ib) ib.addEventListener('click',function(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(){
+    deferredPrompt=null;
+    var b=document.getElementById('install-bar');if(b)b.style.display='none';
+  });
+});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
+
+// INIT
+render();
+fetchAI();
+scheduleNotifs();
+</script>
+</body>
+</html>

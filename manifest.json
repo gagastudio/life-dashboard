@@ -1,0 +1,18 @@
+{
+  "name": "ჩემი ცხოვრების დეშბორდი",
+  "short_name": "Life Dashboard",
+  "description": "პირადი ცხოვრების ორგანიზატორი",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fafaf8",
+  "theme_color": "#1a1a18",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
