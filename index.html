@@ -13,7 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#fafaf8;--bg2:#f2f0e8;--bg3:#e8e6de;--bg4:#dedcD4;
+  --bg:#fafaf8;--bg2:#f2f0e8;--bg3:#e8e6de;--bg4:#dedcd4;
   --text:#0f0f0d;--text2:#5a5a52;--text3:#9a9a90;--text4:#c8c8be;
   --border:rgba(15,15,13,0.08);--border2:rgba(15,15,13,0.15);
   --teal:#1D9E75;--teal-l:#E1F5EE;--teal-d:#085041;
@@ -48,6 +48,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .topbar-score-num{font-size:28px;font-weight:300;font-family:'DM Mono',monospace;color:var(--text);line-height:1}
 .topbar-score-lbl{font-size:11px;color:var(--text3);margin-top:2px}
 
+/* MONTH NAV */
+.month-nav{display:flex;align-items:center;justify-content:center;gap:12px;padding:0 16px 12px;margin:0 0 4px}
+.month-nav-btn{width:32px;height:32px;border:1px solid var(--border2);border-radius:50%;background:transparent;color:var(--text2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.month-nav-btn:hover{background:var(--bg2)}
+.month-nav-label{font-size:14px;font-weight:500;color:var(--text);font-family:'DM Mono',monospace;min-width:130px;text-align:center}
+.month-current-badge{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--teal-l);color:var(--teal-d);margin-left:6px;cursor:pointer}
+
 /* AI BANNER */
 .ai-banner{margin:0 16px 16px;border-radius:var(--r);padding:16px 18px;position:relative;overflow:hidden;border:1px solid var(--border2)}
 .ai-banner-inner{display:flex;gap:12px;align-items:flex-start}
@@ -59,8 +66,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .ai-loading{font-size:13px;color:var(--text3);font-style:italic}
 
 /* NAV */
-.nav{display:flex;margin:0 16px 20px;background:var(--bg2);border-radius:var(--r);padding:4px;border:1px solid var(--border);gap:2px}
-.nav-btn{flex:1;font-size:11px;padding:8px 2px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:10px;font-family:'Noto Sans Georgian',sans-serif;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav{display:flex;margin:0 16px 20px;background:var(--bg2);border-radius:var(--r);padding:4px;border:1px solid var(--border);gap:2px;overflow-x:auto}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{flex:1;min-width:52px;font-size:11px;padding:8px 2px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:10px;font-family:'Noto Sans Georgian',sans-serif;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:2px}
 .nav-btn .nav-icon{font-size:16px}
 .nav-btn.active{background:var(--bg);color:var(--text);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
 
@@ -79,6 +87,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 /* STATS GRID */
 .stats4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .stats2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stats3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .stat-box{background:var(--bg2);border-radius:var(--rm);padding:12px 14px;border:1px solid var(--border)}
 .stat-lbl{font-size:11px;color:var(--text3);margin-bottom:3px}
 .stat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
@@ -109,6 +118,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .ph{background:var(--red-l);color:var(--red-d)}
 .pm{background:var(--amber-l);color:var(--amber-d)}
 .pl{background:var(--teal-l);color:var(--teal-d)}
+.tag-carried{background:var(--blue-l);color:var(--blue-d);font-size:10px}
 .del-x{font-size:18px;color:var(--text4);cursor:pointer;padding:0 3px;flex-shrink:0;line-height:1}
 
 /* ADD FORM */
@@ -119,6 +129,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .arow select,.arow input{flex:1;font-size:12px;padding:8px 9px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;outline:none;min-width:0}
 .abtn{width:100%;font-size:13px;padding:10px;border:none;border-radius:var(--rs);background:var(--text);color:var(--bg);cursor:pointer;font-family:'Noto Sans Georgian',sans-serif;font-weight:500;transition:opacity 0.1s}
 .abtn:active{opacity:0.7}
+.abtn-secondary{background:transparent;border:1px solid var(--border2);color:var(--text2)}
 
 /* HABITS */
 .habit-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
@@ -139,7 +150,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .goal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .goal-name{font-size:13px;font-weight:500;color:var(--text)}
 .goal-pct{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2)}
-.goal-desc{font-size:12px;color:var(--text3);margin-bottom:8px}
 .goal-bar-track{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border);margin-bottom:6px}
 .goal-bar-fill{height:100%;border-radius:4px;transition:width 0.4s}
 .goal-footer{display:flex;align-items:center;justify-content:space-between}
@@ -167,6 +177,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .fin-box{background:var(--bg2);border-radius:var(--rm);padding:12px;border:1px solid var(--border)}
 .fin-lbl{font-size:11px;color:var(--text3);margin-bottom:3px}
 .fin-val{font-size:17px;font-weight:500;font-family:'DM Mono',monospace}
+.fin-sub{font-size:11px;color:var(--text3);margin-top:2px}
 .bbar{margin-bottom:10px}
 .bbar-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px}
 .bbar-track{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
@@ -176,6 +187,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .exp-cat-badge{font-size:11px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--text3);border:1px solid var(--border);flex-shrink:0}
 .exp-desc{font-size:13px;color:var(--text);flex:1}
 .exp-amt{font-size:13px;font-weight:500;font-family:'DM Mono',monospace}
+/* Income items */
+.inc-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.inc-item:last-child{border-bottom:none}
+.inc-src-badge{font-size:11px;padding:2px 7px;border-radius:20px;background:var(--teal-l);color:var(--teal-d);border:1px solid rgba(29,158,117,0.2);flex-shrink:0}
+.inc-desc{font-size:13px;color:var(--text);flex:1}
+.inc-amt{font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--teal)}
 
 /* LEARN */
 .course-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
@@ -201,6 +218,17 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .streak-name{font-size:12px;color:var(--text2)}
 .streak-num{font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
 
+/* MONTHLY STATS */
+.month-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.month-stat-item{background:var(--bg2);border-radius:var(--rm);padding:12px;border:1px solid var(--border);cursor:pointer;transition:all 0.15s}
+.month-stat-item:hover{border-color:var(--border2)}
+.month-stat-mo{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:6px}
+.month-stat-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text2);margin-bottom:3px}
+.month-stat-val{font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+
+/* MONTHLY CHART */
+.monthly-chart-wrap{position:relative;height:220px;margin-bottom:8px}
+
 /* EMPTY */
 .empty{font-size:13px;color:var(--text3);padding:20px 0;text-align:center}
 
@@ -214,6 +242,23 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .sec-title{font-size:16px;font-weight:500;color:var(--text)}
 .sec-sub{font-size:12px;color:var(--text3)}
+
+/* MONTH RESET BANNER */
+.reset-banner{margin:0 0 14px;background:var(--amber-l);border:1px solid rgba(239,159,39,0.3);border-radius:var(--r);padding:14px 16px}
+.reset-banner-title{font-size:13px;font-weight:500;color:var(--amber-d);margin-bottom:4px}
+.reset-banner-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+.reset-banner-btns{display:flex;gap:8px}
+.reset-btn{font-size:12px;padding:7px 14px;border-radius:var(--rs);cursor:pointer;font-family:'Noto Sans Georgian',sans-serif;font-weight:500;border:none}
+.reset-btn-primary{background:var(--amber);color:#fff}
+.reset-btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--bg2);border-radius:var(--rm);padding:3px;border:1px solid var(--border)}
+.tab-btn{flex:1;font-size:12px;padding:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:8px;font-family:'Noto Sans Georgian',sans-serif;transition:all 0.15s}
+.tab-btn.active{background:var(--bg);color:var(--text);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+
+/* READONLY mode */
+.readonly-notice{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--text3);text-align:center}
 </style>
 </head>
 <body>
@@ -228,6 +273,16 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
       <div class="topbar-score-num" id="tb-score">—</div>
       <div class="topbar-score-lbl">დღის ქულა</div>
     </div>
+  </div>
+
+  <!-- MONTH NAVIGATION -->
+  <div class="month-nav">
+    <button class="month-nav-btn" onclick="changeMonth(-1)">‹</button>
+    <div style="display:flex;align-items:center">
+      <span class="month-nav-label" id="month-label">—</span>
+      <span class="month-current-badge" id="current-badge" onclick="goToCurrentMonth()" style="display:none">დღეს</span>
+    </div>
+    <button class="month-nav-btn" onclick="changeMonth(1)" id="next-month-btn">›</button>
   </div>
 
   <div id="install-bar" class="install-bar" style="display:none">
@@ -260,13 +315,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 
   <!-- TASKS -->
   <div id="sec-tasks" class="section active">
+    <div id="month-reset-banner" style="display:none"></div>
     <div class="filter-strip">
       <button class="fbtn active" onclick="setFilter('all',this)">ყველა</button>
       <button class="fbtn" onclick="setFilter('active',this)">მიმდინარე</button>
       <button class="fbtn" onclick="setFilter('done',this)">დასრულდა</button>
+      <button class="fbtn" onclick="setFilter('carried',this)">↩ გადმოტანილი</button>
       <button class="fbtn" onclick="setFilter('high',this)">🔴 სასწრაფო</button>
-      <button class="fbtn" onclick="setFilter('mid',this)">🟡 საშუალო</button>
-      <button class="fbtn" onclick="setFilter('low',this)">🟢 დაბალი</button>
     </div>
     <div class="stats4">
       <div class="stat-box"><div class="stat-lbl">სულ</div><div class="stat-val" id="ts-total">0</div></div>
@@ -278,7 +333,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
       <div class="card-head"><div class="card-title">დავალებები</div><div class="card-hint" id="task-hint"></div></div>
       <div class="card-body">
         <div id="task-list"></div>
-        <div class="add-form">
+        <div class="add-form" id="task-add-form">
           <input class="ai" id="task-inp" placeholder="ახალი დავალება..." onkeydown="if(event.key==='Enter')addTask()"/>
           <div class="arow">
             <select id="task-pri"><option value="high">🔴 მაღალი</option><option value="mid" selected>🟡 საშუალო</option><option value="low">🟢 დაბალი</option></select>
@@ -297,7 +352,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
       <div class="card-head"><div class="card-title">ჩემი მიზნები</div><div class="card-hint">პროგრესი</div></div>
       <div class="card-body">
         <div id="goal-list"></div>
-        <div class="add-form">
+        <div class="add-form" id="goal-add-form">
           <input class="ai" id="goal-name" placeholder="მიზნის სახელი (მაგ: 10,000 ნაბიჯი)"/>
           <div class="arow">
             <input class="ai" id="goal-target" type="number" placeholder="მიზანი (რიცხვი)" style="margin:0"/>
@@ -339,9 +394,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
           <button class="abtn" onclick="addReminder()">+ შეხსენების დამატება</button>
         </div>
         <div style="margin-top:10px;padding:10px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--border)">
-          <div style="font-size:12px;color:var(--text3);line-height:1.6">
-            ℹ️ შეხსენებები ინახება აპში. ბრაუზერის ნოტიფიკაციებისთვის დააჭირე ღილაკს:
-          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.6">ℹ️ შეხსენებები ინახება აპში. ბრაუზერის ნოტიფიკაციებისთვის:</div>
           <button onclick="askNotifPerm()" style="margin-top:8px;font-size:12px;padding:6px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:transparent;color:var(--text);cursor:pointer;font-family:'Noto Sans Georgian',sans-serif" id="notif-btn">🔔 ნოტიფიკაციების ჩართვა</button>
         </div>
       </div>
@@ -351,25 +404,70 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
   <!-- FINANCE -->
   <div id="sec-finance" class="section">
     <div class="fin-stats">
-      <div class="fin-box"><div class="fin-lbl">ხარჯი</div><div class="fin-val" id="fn-total">0₾</div></div>
-      <div class="fin-box"><div class="fin-lbl">ბიუჯეტი</div><div class="fin-val">500₾</div></div>
-      <div class="fin-box"><div class="fin-lbl">დარჩა</div><div class="fin-val" id="fn-left">500₾</div></div>
+      <div class="fin-box">
+        <div class="fin-lbl">შემოსავალი</div>
+        <div class="fin-val" id="fn-income" style="color:var(--teal)">0₾</div>
+        <div class="fin-sub" id="fn-income-count">0 წყარო</div>
+      </div>
+      <div class="fin-box">
+        <div class="fin-lbl">ხარჯი</div>
+        <div class="fin-val" id="fn-total">0₾</div>
+      </div>
+      <div class="fin-box">
+        <div class="fin-lbl">ნაშთი</div>
+        <div class="fin-val" id="fn-left">0₾</div>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">კატეგორიები</div></div>
-      <div class="card-body"><div id="fin-bars"></div></div>
+
+    <!-- Finance Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-income" onclick="switchFinTab('income',this)">💚 შემოსავალი</button>
+      <button class="tab-btn" id="tab-expense" onclick="switchFinTab('expense',this)">🔴 ხარჯები</button>
     </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">ხარჯები</div></div>
-      <div class="card-body">
-        <div id="exp-list"></div>
-        <div class="add-form">
-          <input class="ai" id="exp-desc" placeholder="რა იყიდე?"/>
-          <div class="arow">
-            <input class="ai" id="exp-amt" type="number" placeholder="₾ თანხა" style="margin:0"/>
-            <select id="exp-cat"><option>საკვები</option><option>ტრანსპ.</option><option>გართობა</option><option>ჯანმრთ.</option><option>სხვა</option></select>
+
+    <!-- INCOME TAB -->
+    <div id="fin-tab-income">
+      <div class="card">
+        <div class="card-head"><div class="card-title">შემოსავლის წყაროები</div><div class="card-hint" id="inc-total-hint"></div></div>
+        <div class="card-body">
+          <div id="inc-list"></div>
+          <div class="add-form" id="income-add-form">
+            <input class="ai" id="inc-desc" placeholder="შემოსავლის წყარო (მაგ: ხელფასი)"/>
+            <div class="arow">
+              <input class="ai" id="inc-amt" type="number" placeholder="₾ თანხა" style="margin:0"/>
+              <select id="inc-src">
+                <option value="salary">ხელფასი</option>
+                <option value="freelance">ფრილანსი</option>
+                <option value="business">ბიზნესი</option>
+                <option value="investment">ინვესტიცია</option>
+                <option value="gift">საჩუქარი</option>
+                <option value="other">სხვა</option>
+              </select>
+            </div>
+            <button class="abtn" onclick="addIncome()">+ შემოსავლის დამატება</button>
           </div>
-          <button class="abtn" onclick="addExp()">+ ხარჯის დამატება</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPENSE TAB -->
+    <div id="fin-tab-expense" style="display:none">
+      <div class="card">
+        <div class="card-head"><div class="card-title">კატეგორიები</div></div>
+        <div class="card-body"><div id="fin-bars"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">ხარჯები</div></div>
+        <div class="card-body">
+          <div id="exp-list"></div>
+          <div class="add-form" id="expense-add-form">
+            <input class="ai" id="exp-desc" placeholder="რა იყიდე?"/>
+            <div class="arow">
+              <input class="ai" id="exp-amt" type="number" placeholder="₾ თანხა" style="margin:0"/>
+              <select id="exp-cat"><option>საკვები</option><option>ტრანსპ.</option><option>გართობა</option><option>ჯანმრთ.</option><option>სხვა</option></select>
+            </div>
+            <button class="abtn" onclick="addExp()">+ ხარჯის დამატება</button>
+          </div>
         </div>
       </div>
     </div>
@@ -377,13 +475,34 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 
   <!-- STATS -->
   <div id="sec-stats" class="section">
-    <div class="sec-header"><div class="sec-title">სტატისტიკა</div><div class="sec-sub">ბოლო 7 დღე</div></div>
+    <div class="sec-header"><div class="sec-title">სტატისტიკა</div><div class="sec-sub" id="stats-period-label"></div></div>
 
     <div class="stats4">
       <div class="stat-box"><div class="stat-lbl">საშ. ქულა</div><div class="stat-val" id="st-avg">—</div></div>
       <div class="stat-box"><div class="stat-lbl">სულ დავალ.</div><div class="stat-val" id="st-tasks">—</div></div>
       <div class="stat-box"><div class="stat-lbl">ჩვ. სერია</div><div class="stat-val" id="st-hstreak">—</div></div>
-      <div class="stat-box"><div class="stat-lbl">დახარჯა</div><div class="stat-val" id="st-spent">—</div></div>
+      <div class="stat-box"><div class="stat-lbl">ნაშთი</div><div class="stat-val" id="st-balance">—</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">თვიური ფინანსები</div></div>
+      <div class="card-body">
+        <div class="monthly-chart-wrap"><canvas id="monthly-finance-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">თვიური დავალებები</div></div>
+      <div class="card-body">
+        <div class="monthly-chart-wrap"><canvas id="monthly-tasks-chart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">ბოლო თვეების შეჯამება</div></div>
+      <div class="card-body">
+        <div id="monthly-summary-list"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -416,158 +535,343 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',san
 </div>
 
 <script>
-var STORE = 'ld-v2';
+// ==================== STORAGE ====================
+var STORE_PREFIX = 'ld-v3-';
+var GLOBAL_STORE = 'ld-v3-global';
+
 var priO = {high:0,mid:1,low:2};
 var catMap = {t:{lbl:'ჯანმრთ.',cls:'tt',col:'#1D9E75'},p:{lbl:'სწავლა',cls:'tp',col:'#7F77DD'},b:{lbl:'ფინანსი',cls:'tb',col:'#378ADD'},a:{lbl:'დრო/პრ.',cls:'ta',col:'#EF9F27'}};
 var weekDays = ['ო','ს','ო','ხ','პ','შ','კ'];
 var priMap = {high:{lbl:'მაღალი',cls:'ph',stripe:'pri-high-s'},mid:{lbl:'საშ.',cls:'pm',stripe:'pri-mid-s'},low:{lbl:'დაბ.',cls:'pl',stripe:'pri-low-s'}};
 var catLimitMap = {საკვები:200,'ტრანსპ.':100,გართობა:120,'ჯანმრთ.':80,სხვა:80};
-var curFilter='all';
-var deferredPrompt=null;
-var charts={};
+var incSrcMap = {salary:'ხელფასი',freelance:'ფრილანსი',business:'ბიზნესი',investment:'ინვესტ.',gift:'საჩუქ.',other:'სხვა'};
+var monthsGeo = ['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+var monthsShort = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
+var wds = ['კვ','ორ','სა','ოთ','ხუ','პა','შა'];
 
-var def = {
-  tasks:[
-    {text:'დილის ვარჯიში',cat:'t',pri:'high',done:true},
-    {text:'Python გაკვეთილი',cat:'p',pri:'high',done:false},
-    {text:'ბიუჯეტის განახლება',cat:'b',pri:'mid',done:false},
-    {text:'10,000 ნაბიჯი',cat:'t',pri:'mid',done:false},
-    {text:'კვირის გეგმა',cat:'a',pri:'low',done:false}
-  ],
-  goals:[
-    {name:'10,000 ნაბიჯი',target:10000,current:7400,unit:'ნაბ.',cat:'t'},
-    {name:'შემნახველი ₾1000',target:1000,current:340,unit:'₾',cat:'b'},
-    {name:'Python კურსი',target:100,current:68,unit:'%',cat:'p'},
-    {name:'კილოგრამი -5',target:5,current:2,unit:'კგ',cat:'t'}
-  ],
-  habits:[
-    {name:'ვარჯიში',color:'t',days:[1,1,1,0,0,0,0]},
-    {name:'კითხვა',color:'p',days:[1,1,0,0,0,0,0]},
-    {name:'მედიტაცია',color:'b',days:[1,1,1,1,0,0,0]},
-    {name:'ბიუჯეტი',color:'a',days:[1,0,0,0,0,0,0]}
-  ],
-  reminders:[
-    {text:'დილის ვარჯიში',time:'07:00',repeat:'daily',on:true},
-    {text:'წყლის დალევა',time:'10:00',repeat:'daily',on:true},
-    {text:'ბიუჯეტის შემოწმება',time:'20:00',repeat:'weekdays',on:false}
-  ],
-  expenses:[
-    {desc:'სუპერმარკეტი',amt:45,cat:'საკვები'},
-    {desc:'ავტობუსი',amt:10,cat:'ტრანსპ.'},
-    {desc:'კინო',amt:25,cat:'გართობა'}
-  ],
-  scores:[65,70,68,75,80,78,82]
-};
+var curFilter = 'all';
+var deferredPrompt = null;
+var charts = {};
+var curFinTab = 'income';
 
-function load(){try{var d=localStorage.getItem(STORE);return d?JSON.parse(d):def;}catch(e){return def;}}
-function save(){try{localStorage.setItem(STORE,JSON.stringify(data));}catch(e){}}
-var data=load();
+// Viewing month: {year, month} — month is 0-indexed
+var now = new Date();
+var viewYear = now.getFullYear();
+var viewMonth = now.getMonth();
 
-// DATE
-var now=new Date();
-var months=['იანვ','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
-var wds=['კვ','ორ','სა','ოთ','ხუ','პა','შა'];
-var el=document.getElementById('tb-date');
-if(el) el.textContent=wds[now.getDay()]+', '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+// ==================== MONTH KEY ====================
+function monthKey(y, m) {
+  return STORE_PREFIX + y + '-' + String(m+1).padStart(2,'0');
+}
+function currentMonthKey() {
+  return monthKey(now.getFullYear(), now.getMonth());
+}
+function viewMonthKey() {
+  return monthKey(viewYear, viewMonth);
+}
+function isCurrentMonth() {
+  return viewYear === now.getFullYear() && viewMonth === now.getMonth();
+}
 
-// SCORE
-function calcScore(){
-  var done=data.tasks.filter(function(t){return t.done}).length;
-  var taskPct=data.tasks.length?Math.round(done/data.tasks.length*100):0;
-  var hd=data.habits.reduce(function(s,h){return s+h.days.reduce(function(a,b){return a+b},0)},0);
-  var hm=data.habits.length*7;
-  var habitPct=hm?Math.round(hd/hm*100):0;
-  var exp=data.expenses.reduce(function(s,e){return s+e.amt},0);
-  var finPct=Math.max(0,Math.round((500-exp)/500*100));
-  var goalPct=data.goals.length?Math.round(data.goals.reduce(function(s,g){return s+Math.min(100,Math.round(g.current/g.target*100))},0)/data.goals.length):0;
+// ==================== DEFAULT DATA ====================
+function defaultMonthData() {
+  return {
+    tasks: [],
+    goals: [
+      {name:'10,000 ნაბიჯი',target:10000,current:0,unit:'ნაბ.',cat:'t'},
+      {name:'შემნახველი ₾1000',target:1000,current:0,unit:'₾',cat:'b'}
+    ],
+    habits: [
+      {name:'ვარჯიში',color:'t',days:[0,0,0,0,0,0,0]},
+      {name:'კითხვა',color:'p',days:[0,0,0,0,0,0,0]},
+      {name:'მედიტაცია',color:'b',days:[0,0,0,0,0,0,0]}
+    ],
+    reminders: [
+      {text:'დილის ვარჯიში',time:'07:00',repeat:'daily',on:true},
+      {text:'წყლის დალევა',time:'10:00',repeat:'daily',on:true}
+    ],
+    expenses: [],
+    income: [],
+    scores: [0,0,0,0,0,0,0],
+    budget: 500,
+    notes: ''
+  };
+}
+
+// ==================== LOAD / SAVE ====================
+function loadMonth(y, m) {
+  try {
+    var key = monthKey(y, m);
+    var d = localStorage.getItem(key);
+    if (d) return JSON.parse(d);
+    // If it's the current month and no data, check for legacy data
+    if (y === now.getFullYear() && m === now.getMonth()) {
+      var legacy = localStorage.getItem('ld-v2');
+      if (legacy) {
+        var ld = JSON.parse(legacy);
+        // Migrate legacy data
+        var migrated = defaultMonthData();
+        migrated.tasks = (ld.tasks||[]).map(function(t){return Object.assign({carried:false},t);});
+        migrated.goals = ld.goals||migrated.goals;
+        migrated.habits = ld.habits||migrated.habits;
+        migrated.reminders = ld.reminders||migrated.reminders;
+        migrated.expenses = ld.expenses||[];
+        migrated.scores = ld.scores||migrated.scores;
+        return migrated;
+      }
+    }
+    return defaultMonthData();
+  } catch(e) { return defaultMonthData(); }
+}
+
+function saveMonth(y, m, d) {
+  try { localStorage.setItem(monthKey(y,m), JSON.stringify(d)); } catch(e) {}
+}
+
+function loadView() { return loadMonth(viewYear, viewMonth); }
+function saveView() { saveMonth(viewYear, viewMonth, data); }
+
+var data = loadMonth(viewYear, viewMonth);
+
+// ==================== MONTH NAVIGATION ====================
+function changeMonth(dir) {
+  viewMonth += dir;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  data = loadView();
+  updateMonthUI();
+  render();
+  if (document.getElementById('sec-stats').classList.contains('active')) {
+    setTimeout(renderCharts, 100);
+  }
+}
+
+function goToCurrentMonth() {
+  viewYear = now.getFullYear();
+  viewMonth = now.getMonth();
+  data = loadView();
+  updateMonthUI();
+  render();
+}
+
+function updateMonthUI() {
+  var label = monthsGeo[viewMonth] + ' ' + viewYear;
+  setText('month-label', label);
+  var badge = document.getElementById('current-badge');
+  var nextBtn = document.getElementById('next-month-btn');
+  var isCur = isCurrentMonth();
+  if (badge) badge.style.display = isCur ? 'none' : 'inline-block';
+  // Disable next button if on current month
+  if (nextBtn) {
+    var isAhead = (viewYear > now.getFullYear()) || (viewYear === now.getFullYear() && viewMonth >= now.getMonth());
+    nextBtn.disabled = isAhead;
+    nextBtn.style.opacity = isAhead ? '0.3' : '1';
+  }
+  // Show/hide add forms
+  var readonly = !isCurrentMonth();
+  ['task-add-form','goal-add-form','income-add-form','expense-add-form'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = readonly ? 'none' : 'block';
+  });
+  // Readonly notice
+  checkResetBanner();
+}
+
+function checkResetBanner() {
+  var banner = document.getElementById('month-reset-banner');
+  if (!banner) return;
+  if (!isCurrentMonth()) {
+    banner.innerHTML = '<div class="readonly-notice">📖 წარსული თვე — მხოლოდ სანახავი რეჟიმი</div>';
+    banner.style.display = 'block';
+    return;
+  }
+  // Check if we need to suggest month reset
+  var prevY = viewYear, prevM = viewMonth - 1;
+  if (prevM < 0) { prevM = 11; prevY--; }
+  var prevKey = monthKey(prevY, prevM);
+  var prevExists = localStorage.getItem(prevKey);
+  var alreadySetup = data.tasks.length > 0 || data.income.length > 0 || data.expenses.length > 0;
+  if (!alreadySetup && !prevExists) {
+    banner.style.display = 'none';
+    return;
+  }
+  // If new month started and prev month had incomplete tasks
+  var lastChecked = localStorage.getItem('ld-last-reset-check');
+  var curMonthStr = viewYear + '-' + viewMonth;
+  if (lastChecked === curMonthStr || alreadySetup) {
+    banner.style.display = 'none';
+    return;
+  }
+  if (prevExists) {
+    var prevData = JSON.parse(prevExists);
+    var incompleteTasks = (prevData.tasks||[]).filter(function(t){return !t.done;});
+    if (incompleteTasks.length > 0) {
+      banner.innerHTML = '<div class="reset-banner">'+
+        '<div class="reset-banner-title">🔄 ახალი თვე დაიწყო!</div>'+
+        '<div class="reset-banner-desc">წინა თვეში <strong>'+incompleteTasks.length+'</strong> შეუსრულებელი დავალება დარჩა. გადმოიტანო ამ თვეში?</div>'+
+        '<div class="reset-banner-btns">'+
+          '<button class="reset-btn reset-btn-primary" onclick="carryOverTasks()">↩ გადმოტანა</button>'+
+          '<button class="reset-btn reset-btn-secondary" onclick="dismissResetBanner()">გამოტოვება</button>'+
+        '</div>'+
+      '</div>';
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
+    }
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function carryOverTasks() {
+  var prevY = viewYear, prevM = viewMonth - 1;
+  if (prevM < 0) { prevM = 11; prevY--; }
+  var prevData = loadMonth(prevY, prevM);
+  var incomplete = prevData.tasks.filter(function(t){return !t.done;});
+  incomplete.forEach(function(t){
+    data.tasks.push(Object.assign({}, t, {done:false, carried:true}));
+  });
+  saveView();
+  dismissResetBanner();
+  render();
+}
+
+function dismissResetBanner() {
+  localStorage.setItem('ld-last-reset-check', viewYear+'-'+viewMonth);
+  var banner = document.getElementById('month-reset-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+// ==================== DATE ====================
+var el = document.getElementById('tb-date');
+if (el) el.textContent = wds[now.getDay()] + ', ' + now.getDate() + ' ' + monthsShort[now.getMonth()] + ' ' + now.getFullYear();
+
+// ==================== SCORE ====================
+function calcScore() {
+  var done = data.tasks.filter(function(t){return t.done;}).length;
+  var taskPct = data.tasks.length ? Math.round(done/data.tasks.length*100) : 0;
+  var hd = data.habits.reduce(function(s,h){return s+h.days.reduce(function(a,b){return a+b;},0);},0);
+  var hm = data.habits.length*7;
+  var habitPct = hm ? Math.round(hd/hm*100) : 0;
+  var exp = data.expenses.reduce(function(s,e){return s+e.amt;},0);
+  var inc = data.income.reduce(function(s,i){return s+i.amt;},0);
+  var budget = inc > 0 ? inc : (data.budget||500);
+  var finPct = Math.max(0, Math.round((budget-exp)/budget*100));
+  var goalPct = data.goals.length ? Math.round(data.goals.reduce(function(s,g){return s+Math.min(100,Math.round(g.current/g.target*100));},0)/data.goals.length) : 0;
   return Math.round((taskPct+habitPct+finPct+goalPct)/4);
 }
 
-// NAV
-function showSec(id,btn){
-  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
-  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active')});
+// ==================== NAV ====================
+function showSec(id, btn) {
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('sec-'+id).classList.add('active');
   btn.classList.add('active');
   render();
-  if(id==='stats') setTimeout(renderCharts,100);
+  if (id === 'stats') setTimeout(renderCharts, 100);
 }
 
-function setFilter(f,btn){
-  curFilter=f;
-  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active')});
+function setFilter(f, btn) {
+  curFilter = f;
+  document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   renderTasks();
 }
 
-function render(){renderScore();renderTasks();renderGoals();renderHabits();renderReminders();renderFinance();renderStats();}
-
-function renderScore(){
-  var s=calcScore();
-  var e=document.getElementById('tb-score');
-  if(e){e.textContent=s+'%';e.style.color=s>=70?'var(--teal)':s>=40?'var(--amber)':'var(--red)';}
+function switchFinTab(tab, btn) {
+  curFinTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('fin-tab-income').style.display = tab === 'income' ? 'block' : 'none';
+  document.getElementById('fin-tab-expense').style.display = tab === 'expense' ? 'block' : 'none';
 }
 
-// TASKS
-function renderTasks(){
-  var filtered=data.tasks.filter(function(t){
-    if(curFilter==='active') return !t.done;
-    if(curFilter==='done') return t.done;
-    if(curFilter==='high') return t.pri==='high';
-    if(curFilter==='mid') return t.pri==='mid';
-    if(curFilter==='low') return t.pri==='low';
+function render() {
+  updateMonthUI();
+  renderScore();
+  renderTasks();
+  renderGoals();
+  renderHabits();
+  renderReminders();
+  renderFinance();
+  renderStats();
+}
+
+function renderScore() {
+  if (!isCurrentMonth()) {
+    setText('tb-score', '—');
+    return;
+  }
+  var s = calcScore();
+  var e = document.getElementById('tb-score');
+  if (e) { e.textContent = s+'%'; e.style.color = s>=70?'var(--teal)':s>=40?'var(--amber)':'var(--red)'; }
+}
+
+// ==================== TASKS ====================
+function renderTasks() {
+  var filtered = data.tasks.filter(function(t){
+    if (curFilter === 'active') return !t.done;
+    if (curFilter === 'done') return t.done;
+    if (curFilter === 'high') return t.pri === 'high';
+    if (curFilter === 'carried') return t.carried;
     return true;
   }).sort(function(a,b){
-    if(a.done!==b.done) return a.done?1:-1;
+    if (a.done !== b.done) return a.done ? 1 : -1;
     return priO[a.pri]-priO[b.pri];
   });
-  var done=data.tasks.filter(function(t){return t.done}).length;
-  var high=data.tasks.filter(function(t){return !t.done&&t.pri==='high'}).length;
-  var pct=data.tasks.length?Math.round(done/data.tasks.length*100):0;
-  setText('ts-total',data.tasks.length);
-  setText('ts-done',done);
-  setText('ts-high',high);
-  setText('ts-pct',pct+'%');
-  setText('task-hint',done+'/'+data.tasks.length);
-  var list=document.getElementById('task-list'); if(!list) return;
-  if(!filtered.length){list.innerHTML='<div class="empty">დავალება არ მოიძებნა</div>';return;}
-  list.innerHTML='';
+  var done = data.tasks.filter(function(t){return t.done;}).length;
+  var high = data.tasks.filter(function(t){return !t.done && t.pri==='high';}).length;
+  var pct = data.tasks.length ? Math.round(done/data.tasks.length*100) : 0;
+  setText('ts-total', data.tasks.length);
+  setText('ts-done', done);
+  setText('ts-high', high);
+  setText('ts-pct', pct+'%');
+  setText('task-hint', done+'/'+data.tasks.length);
+  var list = document.getElementById('task-list');
+  if (!list) return;
+  if (!filtered.length) { list.innerHTML = '<div class="empty">დავალება არ მოიძებნა</div>'; return; }
+  list.innerHTML = '';
   filtered.forEach(function(t){
-    var idx=data.tasks.indexOf(t);
-    var d=document.createElement('div'); d.className='task-item';
-    var pm=priMap[t.pri]; var cm=catMap[t.cat]||catMap['a'];
-    d.innerHTML='<div class="pri-stripe '+pm.stripe+'"></div>'+
-      '<div class="chk'+(t.done?' done':'')+'" onclick="toggleTask('+idx+')"></div>'+
+    var idx = data.tasks.indexOf(t);
+    var d = document.createElement('div'); d.className = 'task-item';
+    var pm = priMap[t.pri]; var cm = catMap[t.cat]||catMap['a'];
+    var carriedTag = t.carried ? '<span class="tag tag-carried">↩ გადმოტანილი</span>' : '';
+    var readonly = !isCurrentMonth();
+    d.innerHTML = '<div class="pri-stripe '+pm.stripe+'"></div>'+
+      '<div class="chk'+(t.done?' done':'')+'"'+(readonly?'':' onclick="toggleTask('+idx+')"')+'></div>'+
       '<div class="task-info">'+
-        '<div class="task-name'+(t.done?' done':'')+'" onclick="toggleTask('+idx+')">'+t.text+'</div>'+
-        '<div class="task-tags"><span class="tag '+pm.cls+'">'+pm.lbl+'</span><span class="tag '+cm.cls+'">'+cm.lbl+'</span></div>'+
+        '<div class="task-name'+(t.done?' done':'')+'"'+(readonly?'':' onclick="toggleTask('+idx+')"')+'>'+t.text+'</div>'+
+        '<div class="task-tags"><span class="tag '+pm.cls+'">'+pm.lbl+'</span><span class="tag '+cm.cls+'">'+cm.lbl+'</span>'+carriedTag+'</div>'+
       '</div>'+
-      '<div class="del-x" onclick="delTask('+idx+')">×</div>';
+      (readonly ? '' : '<div class="del-x" onclick="delTask('+idx+')">×</div>');
     list.appendChild(d);
   });
 }
-function toggleTask(i){data.tasks[i].done=!data.tasks[i].done;save();render();}
-function delTask(i){data.tasks.splice(i,1);save();render();}
-function addTask(){
-  var inp=document.getElementById('task-inp'); var t=inp.value.trim(); if(!t) return;
-  data.tasks.unshift({text:t,cat:document.getElementById('task-cat').value,pri:document.getElementById('task-pri').value,done:false});
-  inp.value='';save();render();
+function toggleTask(i) { data.tasks[i].done = !data.tasks[i].done; saveView(); render(); }
+function delTask(i) { data.tasks.splice(i,1); saveView(); render(); }
+function addTask() {
+  if (!isCurrentMonth()) return;
+  var inp = document.getElementById('task-inp'); var t = inp.value.trim(); if (!t) return;
+  data.tasks.unshift({text:t, cat:document.getElementById('task-cat').value, pri:document.getElementById('task-pri').value, done:false, carried:false});
+  inp.value = ''; saveView(); render();
 }
 
-// GOALS
-function renderGoals(){
-  var total=data.goals.length;
-  var done=data.goals.filter(function(g){return g.current>=g.target}).length;
-  setText('goals-stat',done+'/'+total+' დასრულდა');
-  var list=document.getElementById('goal-list'); if(!list) return;
-  if(!data.goals.length){list.innerHTML='<div class="empty">მიზანი არ გაქვს</div>';return;}
-  list.innerHTML='';
+// ==================== GOALS ====================
+function renderGoals() {
+  var total = data.goals.length;
+  var done = data.goals.filter(function(g){return g.current>=g.target;}).length;
+  setText('goals-stat', done+'/'+total+' დასრულდა');
+  var list = document.getElementById('goal-list');
+  if (!list) return;
+  if (!data.goals.length) { list.innerHTML = '<div class="empty">მიზანი არ გაქვს</div>'; return; }
+  list.innerHTML = '';
+  var readonly = !isCurrentMonth();
   data.goals.forEach(function(g,i){
-    var pct=Math.min(100,Math.round(g.current/g.target*100));
-    var cm=catMap[g.cat]||catMap['a'];
-    var col=pct>=100?'var(--teal)':pct>=60?'var(--blue)':pct>=30?'var(--amber)':'var(--red)';
-    var row=document.createElement('div'); row.className='goal-item';
-    row.innerHTML='<div class="goal-header">'+
+    var pct = Math.min(100, Math.round(g.current/g.target*100));
+    var cm = catMap[g.cat]||catMap['a'];
+    var col = pct>=100?'var(--teal)':pct>=60?'var(--blue)':pct>=30?'var(--amber)':'var(--red)';
+    var row = document.createElement('div'); row.className = 'goal-item';
+    row.innerHTML = '<div class="goal-header">'+
         '<div class="goal-name">'+g.name+'</div>'+
         '<div class="goal-pct" style="color:'+col+'">'+pct+'%</div>'+
       '</div>'+
@@ -576,52 +880,57 @@ function renderGoals(){
         '<div class="goal-nums">'+g.current+' / '+g.target+' '+g.unit+'</div>'+
         '<div class="goal-controls">'+
           '<span class="tag '+cm.cls+'">'+cm.lbl+'</span>'+
-          '<input class="goal-inp" type="number" value="'+g.current+'" onchange="updGoal('+i+',this.value)"/>'+
-          '<button class="goal-upd" onclick="updGoalBtn('+i+')">განახლება</button>'+
-          '<div class="del-x" onclick="delGoal('+i+')">×</div>'+
+          (readonly ? '' :
+            '<input class="goal-inp" type="number" value="'+g.current+'" onchange="updGoal('+i+',this.value)"/>'+
+            '<button class="goal-upd" onclick="updGoalBtn('+i+')">განახლება</button>'+
+            '<div class="del-x" onclick="delGoal('+i+')">×</div>'
+          )+
         '</div>'+
       '</div>';
     list.appendChild(row);
   });
 }
-function updGoal(i,v){data.goals[i].current=Math.max(0,parseFloat(v)||0);}
-function updGoalBtn(i){save();render();}
-function delGoal(i){data.goals.splice(i,1);save();render();}
-function addGoal(){
-  var name=document.getElementById('goal-name').value.trim();
-  var target=parseFloat(document.getElementById('goal-target').value);
-  var unit=document.getElementById('goal-unit').value.trim()||'';
-  var cat=document.getElementById('goal-cat').value;
-  if(!name||!target) return;
+function updGoal(i,v) { data.goals[i].current = Math.max(0, parseFloat(v)||0); }
+function updGoalBtn(i) { saveView(); render(); }
+function delGoal(i) { data.goals.splice(i,1); saveView(); render(); }
+function addGoal() {
+  if (!isCurrentMonth()) return;
+  var name = document.getElementById('goal-name').value.trim();
+  var target = parseFloat(document.getElementById('goal-target').value);
+  var unit = document.getElementById('goal-unit').value.trim()||'';
+  var cat = document.getElementById('goal-cat').value;
+  if (!name||!target) return;
   data.goals.push({name:name,target:target,current:0,unit:unit,cat:cat});
-  document.getElementById('goal-name').value='';
-  document.getElementById('goal-target').value='';
-  document.getElementById('goal-unit').value='';
-  save();render();
+  document.getElementById('goal-name').value = '';
+  document.getElementById('goal-target').value = '';
+  document.getElementById('goal-unit').value = '';
+  saveView(); render();
 }
 
-// HABITS
-function renderHabits(){
-  var total=data.habits.length*7;
-  var done=data.habits.reduce(function(s,h){return s+h.days.reduce(function(a,b){return a+b},0)},0);
-  var maxStreak=data.habits.reduce(function(ms,h){
-    var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);
+// ==================== HABITS ====================
+function renderHabits() {
+  var total = data.habits.length*7;
+  var done = data.habits.reduce(function(s,h){return s+h.days.reduce(function(a,b){return a+b;},0);},0);
+  var maxStreak = data.habits.reduce(function(ms,h){
+    var s=0; for(var d=6;d>=0;d--){if(h.days[d])s++;else break;} return Math.max(ms,s);
   },0);
-  setText('hs-total',done+'/'+total);
-  setText('hs-streak',maxStreak+'🔥');
-  var list=document.getElementById('habit-list'); if(!list) return;
-  list.innerHTML='';
+  setText('hs-total', done+'/'+total);
+  setText('hs-streak', maxStreak+'🔥');
+  var list = document.getElementById('habit-list');
+  if (!list) return;
+  list.innerHTML = '';
+  var readonly = !isCurrentMonth();
   data.habits.forEach(function(h,hi){
     var streak=0; for(var d=6;d>=0;d--){if(h.days[d])streak++;else break;}
-    var weekDone=h.days.reduce(function(a,b){return a+b},0);
-    var pct=Math.round(weekDone/7*100);
-    var col=catMap[h.color]?catMap[h.color].col:'#888';
-    var row=document.createElement('div'); row.className='habit-item';
-    var dotsH=weekDays.map(function(lbl,di){
-      var onCls=h.days[di]?(' on o'+h.color):'';
-      return '<div class="hdot'+onCls+'" onclick="toggleDot('+hi+','+di+')" title="'+lbl+'">'+lbl+'</div>';
+    var weekDone = h.days.reduce(function(a,b){return a+b;},0);
+    var pct = Math.round(weekDone/7*100);
+    var col = catMap[h.color]?catMap[h.color].col:'#888';
+    var row = document.createElement('div'); row.className = 'habit-item';
+    var dotsH = weekDays.map(function(lbl,di){
+      var onCls = h.days[di] ? (' on o'+h.color) : '';
+      return '<div class="hdot'+onCls+'"'+(readonly?'':' onclick="toggleDot('+hi+','+di+')"')+' title="'+lbl+'">'+lbl+'</div>';
     }).join('');
-    row.innerHTML='<div class="habit-name">'+h.name+'</div>'+
+    row.innerHTML = '<div class="habit-name">'+h.name+'</div>'+
       '<div style="flex:1">'+
         '<div class="hdots">'+dotsH+'</div>'+
         '<div class="hbar-wrap"><div class="hbar-track"><div class="hbar-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>'+
@@ -630,19 +939,20 @@ function renderHabits(){
     list.appendChild(row);
   });
 }
-function toggleDot(hi,di){data.habits[hi].days[di]=data.habits[hi].days[di]?0:1;save();render();}
+function toggleDot(hi,di) { if (!isCurrentMonth()) return; data.habits[hi].days[di] = data.habits[hi].days[di]?0:1; saveView(); render(); }
 
-// REMINDERS
-function renderReminders(){
-  var on=data.reminders.filter(function(r){return r.on}).length;
-  setText('rem-stat',on+' აქტიური');
-  var list=document.getElementById('rem-list'); if(!list) return;
-  if(!data.reminders.length){list.innerHTML='<div class="empty">შეხსენება არ გაქვს</div>';return;}
-  list.innerHTML='';
-  var repMap={daily:'ყოველდღე',weekdays:'სამ. დღ.',weekly:'კვ. ერთხ.',once:'ერთხელ'};
+// ==================== REMINDERS ====================
+function renderReminders() {
+  var on = data.reminders.filter(function(r){return r.on;}).length;
+  setText('rem-stat', on+' აქტიური');
+  var list = document.getElementById('rem-list');
+  if (!list) return;
+  if (!data.reminders.length) { list.innerHTML = '<div class="empty">შეხსენება არ გაქვს</div>'; return; }
+  list.innerHTML = '';
+  var repMap = {daily:'ყოველდღე',weekdays:'სამ. დღ.',weekly:'კვ. ერთხ.',once:'ერთხელ'};
   data.reminders.forEach(function(r,i){
-    var row=document.createElement('div'); row.className='rem-item';
-    row.innerHTML='<div class="rem-time">'+r.time+'</div>'+
+    var row = document.createElement('div'); row.className = 'rem-item';
+    row.innerHTML = '<div class="rem-time">'+r.time+'</div>'+
       '<div class="rem-text">'+r.text+'</div>'+
       '<div class="rem-repeat">'+repMap[r.repeat]+'</div>'+
       '<button class="rem-toggle '+(r.on?'on':'off')+'" onclick="toggleRem('+i+')" title="'+(r.on?'გამორთვა':'ჩართვა')+'"></button>'+
@@ -650,137 +960,283 @@ function renderReminders(){
     list.appendChild(row);
   });
 }
-function toggleRem(i){data.reminders[i].on=!data.reminders[i].on;save();render();scheduleNotifs();}
-function delRem(i){data.reminders.splice(i,1);save();render();}
-function addReminder(){
-  var text=document.getElementById('rem-text').value.trim();
-  var time=document.getElementById('rem-time').value;
-  var repeat=document.getElementById('rem-repeat').value;
-  if(!text) return;
+function toggleRem(i) { data.reminders[i].on = !data.reminders[i].on; saveView(); render(); scheduleNotifs(); }
+function delRem(i) { data.reminders.splice(i,1); saveView(); render(); }
+function addReminder() {
+  var text = document.getElementById('rem-text').value.trim();
+  var time = document.getElementById('rem-time').value;
+  var repeat = document.getElementById('rem-repeat').value;
+  if (!text) return;
   data.reminders.push({text:text,time:time,repeat:repeat,on:true});
-  document.getElementById('rem-text').value='';
-  save();render();scheduleNotifs();
+  document.getElementById('rem-text').value = '';
+  saveView(); render(); scheduleNotifs();
 }
-function askNotifPerm(){
-  if(!('Notification' in window)){alert('ბრაუზერი არ უჭერს მხარს ნოტიფიკაციებს');return;}
+function askNotifPerm() {
+  if (!('Notification' in window)) { alert('ბრაუზერი არ უჭერს მხარს ნოტიფიკაციებს'); return; }
   Notification.requestPermission().then(function(p){
-    var btn=document.getElementById('notif-btn');
-    if(p==='granted'){if(btn)btn.textContent='✅ ნოტიფიკაციები ჩართულია';scheduleNotifs();}
-    else{if(btn)btn.textContent='❌ უარყოფილია';}
+    var btn = document.getElementById('notif-btn');
+    if (p === 'granted') { if (btn) btn.textContent = '✅ ნოტიფიკაციები ჩართულია'; scheduleNotifs(); }
+    else { if (btn) btn.textContent = '❌ უარყოფილია'; }
   });
 }
-function scheduleNotifs(){
-  if(typeof Notification==='undefined'||Notification.permission!=='granted') return;
+function scheduleNotifs() {
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
   data.reminders.filter(function(r){return r.on;}).forEach(function(r){
-    var parts=r.time.split(':');
-    var now2=new Date(); var fire=new Date();
-    fire.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
-    if(fire<=now2) fire.setDate(fire.getDate()+1);
-    var delay=fire-now2;
+    var parts = r.time.split(':');
+    var now2 = new Date(); var fire = new Date();
+    fire.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
+    if (fire <= now2) fire.setDate(fire.getDate()+1);
+    var delay = fire-now2;
     setTimeout(function(){
-      new Notification('Life Dashboard — '+r.text,{body:r.time+' — '+r.text,icon:'icon.svg'});
-    },delay);
+      new Notification('Life Dashboard — '+r.text, {body:r.time+' — '+r.text, icon:'icon.svg'});
+    }, delay);
   });
 }
 
-// FINANCE
-function renderFinance(){
-  var total=data.expenses.reduce(function(s,e){return s+e.amt},0);
-  var left=500-total;
-  var ft=document.getElementById('fn-total'); if(ft) ft.textContent=total+'₾';
-  var fl=document.getElementById('fn-left'); if(fl){fl.textContent=left+'₾';fl.style.color=left<0?'var(--red)':'var(--teal)';}
-  var cats={};
+// ==================== FINANCE ====================
+function renderFinance() {
+  var totalInc = data.income.reduce(function(s,i){return s+i.amt;},0);
+  var totalExp = data.expenses.reduce(function(s,e){return s+e.amt;},0);
+  var balance = totalInc - totalExp;
+  var budget = totalInc > 0 ? totalInc : (data.budget||500);
+
+  var incEl = document.getElementById('fn-income');
+  if (incEl) { incEl.textContent = totalInc+'₾'; }
+  var incCount = document.getElementById('fn-income-count');
+  if (incCount) incCount.textContent = data.income.length + ' წყარო';
+  setText('inc-total-hint', totalInc+'₾ სულ');
+
+  var ft = document.getElementById('fn-total');
+  if (ft) ft.textContent = totalExp+'₾';
+  var fl = document.getElementById('fn-left');
+  if (fl) { fl.textContent = balance+'₾'; fl.style.color = balance<0?'var(--red)':'var(--teal)'; }
+
+  // Income list
+  var incList = document.getElementById('inc-list');
+  if (incList) {
+    if (!data.income.length) { incList.innerHTML = '<div class="empty">შემოსავალი არ გაქვს ამ თვეში</div>'; }
+    else {
+      incList.innerHTML = '';
+      data.income.slice().reverse().forEach(function(inc,ri){
+        var i = data.income.length-1-ri;
+        var row = document.createElement('div'); row.className = 'inc-item';
+        var srcLabel = incSrcMap[inc.src]||inc.src;
+        var readonly = !isCurrentMonth();
+        row.innerHTML = '<div class="inc-src-badge">'+srcLabel+'</div>'+
+          '<div class="inc-desc">'+inc.desc+'</div>'+
+          '<div class="inc-amt">+'+inc.amt+'₾</div>'+
+          (readonly ? '' : '<div class="del-x" onclick="delIncome('+i+')">×</div>');
+        incList.appendChild(row);
+      });
+    }
+  }
+
+  // Expense bars
+  var cats = {};
   data.expenses.forEach(function(e){cats[e.cat]=(cats[e.cat]||0)+e.amt;});
-  var bars=document.getElementById('fin-bars'); if(!bars) return;
-  bars.innerHTML=Object.keys(catLimitMap).map(function(c){
-    var spent=cats[c]||0; var lim=catLimitMap[c];
-    var pct=Math.min(100,Math.round(spent/lim*100));
-    var col=pct>90?'var(--red)':pct>70?'var(--amber)':'var(--blue)';
-    return '<div class="bbar"><div class="bbar-lbl"><span>'+c+'</span><span>'+spent+'/'+lim+'₾</span></div>'+
-      '<div class="bbar-track"><div class="bbar-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
-  }).join('');
-  var el=document.getElementById('exp-list'); if(!el) return;
-  if(!data.expenses.length){el.innerHTML='<div class="empty">ხარჯები არ გაქვს</div>';return;}
-  el.innerHTML='';
-  data.expenses.slice().reverse().forEach(function(e,ri){
-    var i=data.expenses.length-1-ri;
-    var row=document.createElement('div'); row.className='exp-item';
-    row.innerHTML='<div class="exp-cat-badge">'+e.cat+'</div>'+
-      '<div class="exp-desc">'+e.desc+'</div>'+
-      '<div class="exp-amt">'+e.amt+'₾</div>'+
-      '<div class="del-x" onclick="delExp('+i+')">×</div>';
-    el.appendChild(row);
-  });
-}
-function delExp(i){data.expenses.splice(i,1);save();render();}
-function addExp(){
-  var desc=document.getElementById('exp-desc').value.trim();
-  var amt=parseFloat(document.getElementById('exp-amt').value);
-  var cat=document.getElementById('exp-cat').value;
-  if(!desc||!amt||amt<=0) return;
-  data.expenses.push({desc:desc,amt:Math.round(amt),cat:cat});
-  document.getElementById('exp-desc').value='';
-  document.getElementById('exp-amt').value='';
-  save();render();
+  var bars = document.getElementById('fin-bars');
+  if (bars) {
+    bars.innerHTML = Object.keys(catLimitMap).map(function(c){
+      var spent = cats[c]||0; var lim = catLimitMap[c];
+      var pct = Math.min(100, Math.round(spent/lim*100));
+      var col = pct>90?'var(--red)':pct>70?'var(--amber)':'var(--blue)';
+      return '<div class="bbar"><div class="bbar-lbl"><span>'+c+'</span><span>'+spent+'/'+lim+'₾</span></div>'+
+        '<div class="bbar-track"><div class="bbar-fill" style="width:'+pct+'%;background:'+col+'"></div></div></div>';
+    }).join('');
+  }
+
+  // Expense list
+  var expEl = document.getElementById('exp-list');
+  if (expEl) {
+    if (!data.expenses.length) { expEl.innerHTML = '<div class="empty">ხარჯები არ გაქვს</div>'; }
+    else {
+      expEl.innerHTML = '';
+      var readonly = !isCurrentMonth();
+      data.expenses.slice().reverse().forEach(function(e,ri){
+        var i = data.expenses.length-1-ri;
+        var row = document.createElement('div'); row.className = 'exp-item';
+        row.innerHTML = '<div class="exp-cat-badge">'+e.cat+'</div>'+
+          '<div class="exp-desc">'+e.desc+'</div>'+
+          '<div class="exp-amt">'+e.amt+'₾</div>'+
+          (readonly ? '' : '<div class="del-x" onclick="delExp('+i+')">×</div>');
+        expEl.appendChild(row);
+      });
+    }
+  }
 }
 
-// STATS
-function renderStats(){
-  var done=data.tasks.filter(function(t){return t.done}).length;
-  var exp=data.expenses.reduce(function(s,e){return s+e.amt},0);
-  var maxS=data.habits.reduce(function(ms,h){var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);},0);
-  var avgScore=Math.round(data.scores.reduce(function(a,b){return a+b},0)/data.scores.length);
-  setText('st-avg',avgScore+'%');
-  setText('st-tasks',done+'/'+data.tasks.length);
-  setText('st-hstreak',maxS+'🔥');
-  setText('st-spent',exp+'₾');
+function addIncome() {
+  if (!isCurrentMonth()) return;
+  var desc = document.getElementById('inc-desc').value.trim();
+  var amt = parseFloat(document.getElementById('inc-amt').value);
+  var src = document.getElementById('inc-src').value;
+  if (!desc||!amt||amt<=0) return;
+  data.income.push({desc:desc, amt:Math.round(amt), src:src});
+  document.getElementById('inc-desc').value = '';
+  document.getElementById('inc-amt').value = '';
+  saveView(); render();
+}
+function delIncome(i) { data.income.splice(i,1); saveView(); render(); }
+function delExp(i) { data.expenses.splice(i,1); saveView(); render(); }
+function addExp() {
+  if (!isCurrentMonth()) return;
+  var desc = document.getElementById('exp-desc').value.trim();
+  var amt = parseFloat(document.getElementById('exp-amt').value);
+  var cat = document.getElementById('exp-cat').value;
+  if (!desc||!amt||amt<=0) return;
+  data.expenses.push({desc:desc, amt:Math.round(amt), cat:cat});
+  document.getElementById('exp-desc').value = '';
+  document.getElementById('exp-amt').value = '';
+  saveView(); render();
+}
 
-  var sr=document.getElementById('streak-row'); if(!sr) return;
-  sr.innerHTML='';
+// ==================== STATS ====================
+function renderStats() {
+  var done = data.tasks.filter(function(t){return t.done;}).length;
+  var totalInc = data.income.reduce(function(s,i){return s+i.amt;},0);
+  var totalExp = data.expenses.reduce(function(s,e){return s+e.amt;},0);
+  var maxS = data.habits.reduce(function(ms,h){var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);},0);
+  var avgScore = Math.round(data.scores.reduce(function(a,b){return a+b;},0)/data.scores.length);
+  setText('st-avg', avgScore+'%');
+  setText('st-tasks', done+'/'+data.tasks.length);
+  setText('st-hstreak', maxS+'🔥');
+  setText('st-balance', (totalInc-totalExp)+'₾');
+  setText('stats-period-label', monthsGeo[viewMonth]+' '+viewYear);
+
+  var sr = document.getElementById('streak-row'); if (!sr) return;
+  sr.innerHTML = '';
   data.habits.forEach(function(h){
-    var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}
-    var cm=catMap[h.color]||catMap['a'];
-    var badge=document.createElement('div'); badge.className='streak-badge';
-    badge.innerHTML='<div class="streak-icon" style="font-size:18px">◉</div>'+
-      '<div class="streak-info"><div class="streak-name">'+h.name+'</div><div class="streak-num" style="color:'+cm.col+'">'+s+'🔥</div></div>';
+    var s=0; for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}
+    var cm = catMap[h.color]||catMap['a'];
+    var badge = document.createElement('div'); badge.className = 'streak-badge';
+    badge.innerHTML = '<div class="streak-info"><div class="streak-name">'+h.name+'</div><div class="streak-num" style="color:'+cm.col+'">'+s+'🔥</div></div>';
     sr.appendChild(badge);
   });
 
-  var wg=document.getElementById('week-grid'); if(!wg) return;
-  var wlbls=['ორშ','სამ','ოთხ','ხუთ','პარ','შაბ','კვ'];
-  wg.innerHTML=wlbls.map(function(lbl,i){
-    var s=data.scores[i]||0;
-    var col=s>=70?'var(--teal)':s>=40?'var(--amber)':'var(--red)';
+  var wg = document.getElementById('week-grid'); if (!wg) return;
+  var wlbls = ['ორშ','სამ','ოთხ','ხუთ','პარ','შაბ','კვ'];
+  wg.innerHTML = wlbls.map(function(lbl,i){
+    var s = data.scores[i]||0;
+    var col = s>=70?'var(--teal)':s>=40?'var(--amber)':'var(--red)';
     return '<div class="wday"><div class="wday-lbl">'+lbl+'</div><div class="wday-val" style="color:'+col+'">'+s+'</div></div>';
+  }).join('');
+
+  // Monthly summary list
+  renderMonthlySummary();
+}
+
+function getMonthHistory(count) {
+  var months = [];
+  for (var i = count-1; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    var y = d.getFullYear(), m = d.getMonth();
+    var mData = loadMonth(y, m);
+    months.push({
+      year: y, month: m,
+      label: monthsShort[m]+' '+y,
+      income: mData.income.reduce(function(s,inc){return s+inc.amt;},0),
+      expenses: mData.expenses.reduce(function(s,e){return s+e.amt;},0),
+      tasks: mData.tasks.length,
+      tasksDone: mData.tasks.filter(function(t){return t.done;}).length,
+      data: mData
+    });
+  }
+  return months;
+}
+
+function renderMonthlySummary() {
+  var list = document.getElementById('monthly-summary-list');
+  if (!list) return;
+  var months = getMonthHistory(6);
+  if (months.every(function(m){return m.income===0&&m.expenses===0&&m.tasks===0;})) {
+    list.innerHTML = '<div class="empty">ჯერ მონაცემები არ გაქვს</div>';
+    return;
+  }
+  list.innerHTML = months.reverse().map(function(m){
+    var balance = m.income - m.expenses;
+    var taskPct = m.tasks ? Math.round(m.tasksDone/m.tasks*100) : 0;
+    return '<div class="month-stat-item">'+
+      '<div class="month-stat-mo">'+m.label+'</div>'+
+      '<div class="month-stat-row"><span>შემოსავალი</span><span class="month-stat-val" style="color:var(--teal)">'+m.income+'₾</span></div>'+
+      '<div class="month-stat-row"><span>ხარჯი</span><span class="month-stat-val" style="color:var(--red)">'+m.expenses+'₾</span></div>'+
+      '<div class="month-stat-row"><span>ნაშთი</span><span class="month-stat-val" style="color:'+(balance>=0?'var(--teal)':'var(--red)')+'">'+balance+'₾</span></div>'+
+      '<div class="month-stat-row"><span>დავალებები</span><span class="month-stat-val">'+m.tasksDone+'/'+m.tasks+' ('+taskPct+'%)</span></div>'+
+    '</div>';
   }).join('');
 }
 
-function renderCharts(){
+// ==================== CHARTS ====================
+function renderCharts() {
+  var isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  var gridCol = isDark?'rgba(240,239,232,0.08)':'rgba(15,15,13,0.06)';
+  var textCol = isDark?'#606058':'#9a9a90';
+
+  // Monthly finance chart
+  var mfCtx = document.getElementById('monthly-finance-chart');
+  if (mfCtx) {
+    if (charts.monthlyFinance) charts.monthlyFinance.destroy();
+    var months = getMonthHistory(6);
+    charts.monthlyFinance = new Chart(mfCtx, {
+      type: 'bar',
+      data: {
+        labels: months.map(function(m){return m.label;}),
+        datasets: [
+          {label:'შემოსავალი', data:months.map(function(m){return m.income;}), backgroundColor:'rgba(29,158,117,0.7)', borderRadius:4},
+          {label:'ხარჯი', data:months.map(function(m){return m.expenses;}), backgroundColor:'rgba(226,75,74,0.6)', borderRadius:4}
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:textCol,font:{size:11}}}},
+        scales:{
+          y:{grid:{color:gridCol},ticks:{color:textCol,font:{size:11}}},
+          x:{grid:{display:false},ticks:{color:textCol,font:{size:11}}}
+        }
+      }
+    });
+  }
+
+  // Monthly tasks chart
+  var mtCtx = document.getElementById('monthly-tasks-chart');
+  if (mtCtx) {
+    if (charts.monthlyTasks) charts.monthlyTasks.destroy();
+    var months2 = getMonthHistory(6);
+    charts.monthlyTasks = new Chart(mtCtx, {
+      type: 'bar',
+      data: {
+        labels: months2.map(function(m){return m.label;}),
+        datasets: [
+          {label:'შესრულდა', data:months2.map(function(m){return m.tasksDone;}), backgroundColor:'rgba(29,158,117,0.7)', borderRadius:4},
+          {label:'სულ', data:months2.map(function(m){return m.tasks;}), backgroundColor:'rgba(127,119,221,0.4)', borderRadius:4}
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:textCol,font:{size:11}}}},
+        scales:{
+          y:{grid:{color:gridCol},ticks:{color:textCol,font:{size:11},stepSize:1}},
+          x:{grid:{display:false},ticks:{color:textCol,font:{size:11}}}
+        }
+      }
+    });
+  }
+
   // Progress chart
-  var pCtx=document.getElementById('progress-chart');
-  if(pCtx){
-    if(charts.progress) charts.progress.destroy();
-    var isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
-    var gridCol=isDark?'rgba(240,239,232,0.08)':'rgba(15,15,13,0.06)';
-    var textCol=isDark?'#606058':'#9a9a90';
-    charts.progress=new Chart(pCtx,{
+  var pCtx = document.getElementById('progress-chart');
+  if (pCtx) {
+    if (charts.progress) charts.progress.destroy();
+    charts.progress = new Chart(pCtx, {
       type:'line',
       data:{
         labels:['ორშ','სამ','ოთხ','ხუთ','პარ','შაბ','კვ'],
         datasets:[{
-          label:'ქულა',
-          data:data.scores,
-          borderColor:'#7F77DD',
-          backgroundColor:'rgba(127,119,221,0.08)',
-          borderWidth:2,
-          pointBackgroundColor:'#7F77DD',
-          pointRadius:4,
-          tension:0.4,
-          fill:true
+          label:'ქულა', data:data.scores,
+          borderColor:'#7F77DD', backgroundColor:'rgba(127,119,221,0.08)',
+          borderWidth:2, pointBackgroundColor:'#7F77DD', pointRadius:4, tension:0.4, fill:true
         }]
       },
       options:{
-        responsive:true,maintainAspectRatio:false,
+        responsive:true, maintainAspectRatio:false,
         plugins:{legend:{display:false}},
         scales:{
           y:{min:0,max:100,grid:{color:gridCol},ticks:{color:textCol,font:{size:11}}},
@@ -791,90 +1247,81 @@ function renderCharts(){
   }
 
   // Expense donut
-  var eCtx=document.getElementById('exp-chart');
-  if(eCtx){
-    if(charts.exp) charts.exp.destroy();
-    var cats2={};
+  var eCtx = document.getElementById('exp-chart');
+  if (eCtx) {
+    if (charts.exp) charts.exp.destroy();
+    var cats2 = {};
     data.expenses.forEach(function(e){cats2[e.cat]=(cats2[e.cat]||0)+e.amt;});
-    var labels=Object.keys(cats2);
-    var vals=labels.map(function(k){return cats2[k];});
-    var colors=['#378ADD','#EF9F27','#7F77DD','#1D9E75','#E24B4A'];
-    charts.exp=new Chart(eCtx,{
+    var labels = Object.keys(cats2);
+    var vals = labels.map(function(k){return cats2[k];});
+    if (!vals.length) { vals=[1]; labels=['ხარჯი არ არის']; }
+    var colors = ['#378ADD','#EF9F27','#7F77DD','#1D9E75','#E24B4A'];
+    charts.exp = new Chart(eCtx, {
       type:'doughnut',
-      data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderWidth:0,hoverOffset:4}]},
+      data:{labels:labels, datasets:[{data:vals, backgroundColor:colors, borderWidth:0, hoverOffset:4}]},
       options:{
-        responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'right',labels:{font:{size:12},color:window.matchMedia('(prefers-color-scheme:dark)').matches?'#a0a098':'#5a5a52',padding:12}}}
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{position:'right',labels:{font:{size:12},color:isDark?'#a0a098':'#5a5a52',padding:12}}}
       }
     });
   }
 }
 
-// AI ADVICE
-var aiAdvices = [
-  'დღეს 3 სასწრაფო დავალება გაქვს — დაიწყე ყველაზე მნიშვნელოვნით. Eat the frog! 🐸',
-  'შენი ვარჯიშის სერია 3 დღეა — გააგრძელე! მხოლოდ 4 დღე და კვირა დაისრულება 💪',
-  'ბიუჯეტი კარგადაა. ტრანსპორტზე ახლოს ხარ ლიმიტს — გაუფრთხილდი 🚌',
-  'Python კურსი 68%-ზეა — ამ ტემპით 2 კვირაში დაასრულებ! 📚',
-  'დღეს 10,000 ნაბიჯიდან 7,400 გამდინარეა — კიდევ ცოტა სიარული! 🚶',
-  'შემნახველი ₾340 — კარგი პროგრესი! ₾660 დარჩა მიზნამდე 💰',
-  'მედიტაციის სერია 4 დღეა — ეს ძალიან კარგია! გონება და სხეული გმადლობს 🧘',
-  'ამ კვირა 5+ ჩვევა შეასრულე — შენ ჩამპიონი ხარ! 🏆'
-];
-
-function fetchAI(){
-  var textEl=document.getElementById('ai-text');
-  var refEl=document.getElementById('ai-refresh');
-  if(!textEl) return;
-  textEl.className='ai-text ai-loading';
-  textEl.textContent='ანალიზი...';
-  if(refEl) refEl.style.display='none';
-
+// ==================== AI ADVICE ====================
+function fetchAI() {
+  var textEl = document.getElementById('ai-text');
+  var refEl = document.getElementById('ai-refresh');
+  if (!textEl) return;
+  textEl.className = 'ai-text ai-loading';
+  textEl.textContent = 'ანალიზი...';
+  if (refEl) refEl.style.display = 'none';
   setTimeout(function(){
-    var score=calcScore();
-    var done=data.tasks.filter(function(t){return t.done}).length;
-    var high=data.tasks.filter(function(t){return !t.done&&t.pri==='high'}).length;
-    var exp=data.expenses.reduce(function(s,e){return s+e.amt},0);
-    var maxStreak=data.habits.reduce(function(ms,h){var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);},0);
-
-    var msgs=[];
-    if(high>0) msgs.push('🔴 '+high+' სასწრაფო დავალება გაქვს — ჯერ მათ მოუხელთე!');
-    else if(done===data.tasks.length&&data.tasks.length>0) msgs.push('🎉 ყველა დავალება დასრულდა — შესანიშნავი დღე!');
-    else msgs.push('✓ '+done+'/'+data.tasks.length+' დავალება გაქვს დასრულებული.');
-
-    if(maxStreak>=3) msgs.push('🔥 '+maxStreak+' დღის სერია — გააგრძელე!');
-    if(exp>400) msgs.push('⚠️ ბიუჯეტი თითქმის გამოიყო — ფრთხილად.');
-    else if(exp<100) msgs.push('💰 ბიუჯეტი კარგ მდგომარეობაშია.');
-
-    if(score>=70) msgs.push('💪 საერთო ქულა '+score+'% — ძლიერი დღე!');
-    else if(score<40) msgs.push('📈 ქულა '+score+'% — მეტი ენერგია სჭირდება.');
-
-    textEl.className='ai-text';
-    textEl.textContent=msgs.join(' ');
-    if(refEl) refEl.style.display='inline-flex';
-  }, 800);
+    var done = data.tasks.filter(function(t){return t.done;}).length;
+    var high = data.tasks.filter(function(t){return !t.done&&t.pri==='high';}).length;
+    var totalInc = data.income.reduce(function(s,i){return s+i.amt;},0);
+    var totalExp = data.expenses.reduce(function(s,e){return s+e.amt;},0);
+    var balance = totalInc - totalExp;
+    var maxStreak = data.habits.reduce(function(ms,h){var s=0;for(var d=6;d>=0;d--){if(h.days[d])s++;else break;}return Math.max(ms,s);},0);
+    var msgs = [];
+    if (high>0) msgs.push('🔴 '+high+' სასწრაფო დავალება — ჯერ მათ!');
+    else if (done===data.tasks.length&&data.tasks.length>0) msgs.push('🎉 ყველა დავალება დასრულდა!');
+    else msgs.push('✓ '+done+'/'+data.tasks.length+' დავალება შესრულდა.');
+    if (maxStreak>=3) msgs.push('🔥 '+maxStreak+' დღის სერია — გააგრძელე!');
+    if (totalInc>0) {
+      if (totalExp>totalInc*0.9) msgs.push('⚠️ ბიუჯეტის 90% გამოიყო — ფრთხილად!');
+      else msgs.push('💰 ნაშთი: '+balance+'₾');
+    } else {
+      msgs.push('💡 შემოსავლის დამატება ბიუჯეტის სანახავად.');
+    }
+    var score = isCurrentMonth() ? calcScore() : 0;
+    if (score>=70) msgs.push('💪 ქულა '+score+'% — ძლიერი!');
+    textEl.className = 'ai-text';
+    textEl.textContent = msgs.join(' ');
+    if (refEl) refEl.style.display = 'inline-flex';
+  }, 600);
 }
 
-// UTILS
+// ==================== UTILS ====================
 function setText(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
 
-// PWA
-window.addEventListener('beforeinstallprompt',function(e){
-  e.preventDefault();deferredPrompt=e;
-  var b=document.getElementById('install-bar');if(b)b.style.display='flex';
+// ==================== PWA ====================
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); deferredPrompt = e;
+  var b = document.getElementById('install-bar'); if (b) b.style.display = 'flex';
 });
-var ib=document.getElementById('install-btn');
-if(ib) ib.addEventListener('click',function(){
-  if(!deferredPrompt) return;
+var ib = document.getElementById('install-btn');
+if (ib) ib.addEventListener('click', function(){
+  if (!deferredPrompt) return;
   deferredPrompt.prompt();
   deferredPrompt.userChoice.then(function(){
-    deferredPrompt=null;
-    var b=document.getElementById('install-bar');if(b)b.style.display='none';
+    deferredPrompt = null;
+    var b = document.getElementById('install-bar'); if (b) b.style.display = 'none';
   });
 });
-if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
 
-// INIT
+// ==================== INIT ====================
+updateMonthUI();
 render();
 fetchAI();
 scheduleNotifs();
